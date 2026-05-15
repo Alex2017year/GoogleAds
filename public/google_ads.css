@@ -515,6 +515,160 @@
     display: none;
 }
 
+.ga-notifications {
+    position: relative;
+}
+.ga-notifications-popup {
+
+    position: absolute;
+
+    top: 72px;
+    right: 260px;
+
+    width: 400px;
+
+    background: white;
+
+    border-radius: 4px;
+
+    box-shadow:
+        0 1px 3px rgba(0,0,0,.2),
+        0 8px 24px rgba(0,0,0,.15);
+
+    overflow: hidden;
+
+    transform-origin: top right;
+
+    z-index: 9999;
+}
+.ga-notifications-header {
+
+    padding: 16px 16px;
+
+    font-size: 18px;
+    font-weight: 600;
+
+    border-bottom: 1px solid #e0e0e0;
+}
+.ga-notification-item {
+
+    display: flex;
+
+    gap: 10px;
+
+    padding: 18px;
+
+    border-bottom: 1px solid #e0e0e0;
+}
+.ga-notification-icon {
+
+    width: 22px;
+    height: 22px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: bold;
+}
+.ga-notification-icon.error {
+
+    border: 2px solid #d93025;
+
+    color: #d93025;
+}
+.ga-notification-icon.warn {
+
+    border: 2px solid #1a73e8;
+
+    color: #1a73e8;
+}
+.ga-notification-content h4 {
+
+    margin: 0 0 8px;
+
+    font-size: 15px;
+    font-weight: 600;
+}
+.ga-notification-content p {
+
+    margin: 0 0 6px;
+    color: #5f6368;
+    font-size: 13px;
+}
+.ga-view-btn {
+
+    background: #1a73e8;
+    color: white;
+
+    border: none;
+
+    border-radius: 4px;
+
+    padding: 8px 16px;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    cursor: pointer;
+}
+/* 文字按钮，只有文字没有背景 */
+.ga-text-btn {
+
+    background: transparent;
+    color: #1a73e8;
+
+    border: none;
+
+    border-radius: 4px;
+
+    margin-left: -4px;
+
+    padding: 8px 4px;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    cursor: pointer;
+}
+
+.ga-notifications-transition-popup-enter-active{
+    transition:
+        opacity 0.01s linear,
+        transform 0.01s linear;
+        /* opacity 1.0s cubic-bezier(0.2, 0, 0, 1), */
+        /* transform 0.01s cubic-bezier(0.2, 0, 0, 1); */
+}
+.ga-notifications-transition-popup-leave-active {
+    transition:
+        opacity 0.2s ease-in,
+        transform 0.2s ease-in;
+        /* opacity 0.35s cubic-bezier(0.2, 0, 0, 1),
+        transform 0.35s cubic-bezier(0.2, 0, 0, 1); */
+}
+.ga-notifications-transition-popup-enter-from,
+.ga-notifications-transition-popup-leave-to {
+
+    opacity: 0;
+
+    transform:
+        scale(0.2);
+}
+.ga-notifications-transition-popup-enter-to,
+.ga-notifications-transition-popup-leave-from {
+
+    opacity: 1;
+
+    transform:
+        scale(1);
+}
+/* .ga-notifications-popup {
+
+    transform-origin: top left;
+} */
+
 .ga-main {
     flex: 1;
     min-width: 0;

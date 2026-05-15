@@ -40,6 +40,7 @@ createApp({
             ads_isCampaignOpen: true,
             ads_isInsightsReportsOpen: true,
             ads_isAssetsOpen:false,
+            isNotificationsOpen: false,
             tooltip: {
                 visible: false,
                 text: '',
@@ -414,11 +415,15 @@ createApp({
             clearTimeout(this.tooltipTimer)
             this.tooltip.visible = false
             this.currentTooltipTarget = null
-        }
+        },
+
+        toggleNotifications() {
+            this.isNotificationsOpen = !this.isNotificationsOpen
+        },
     },
     async mounted() {
         await this.loadData();
-        document.addEventListener('click', this.closeDropdown);
+        document.addEventListener('click', this.closeDropdown, this.handleClickOutside);
         
         // Add scroll listener for hiding context bar
         const mainElement = document.querySelector('.ga-main');
@@ -427,7 +432,7 @@ createApp({
         }
     },
     beforeUnmount() {
-        document.removeEventListener('click', this.closeDropdown);
+        document.removeEventListener('click', this.closeDropdown, this.handleClickOutside);
         
         // Remove scroll listener
         const mainElement = document.querySelector('.ga-main');
