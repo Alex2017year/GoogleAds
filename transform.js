@@ -367,7 +367,7 @@ function buildAssetRows() {
     }));
 }
 
-async function processGoogleAdsWorkbook(filePath = GOOGLE_ADS_INPUT_FILE) {
+async function processGoogleAdsWorkbook(filePath = INPUT_FILE) {
     if (!fs.existsSync(filePath)) {
         console.error(`Google Ads input file not found: ${filePath}`);
         return;
@@ -375,35 +375,60 @@ async function processGoogleAdsWorkbook(filePath = GOOGLE_ADS_INPUT_FILE) {
 
     try {
         const workbook = XLSX.readFile(filePath, { cellDates: true });
-        const campaignRows = objectRowsFromSheet(workbook, 'campaign');
-        const adGroupRows = objectRowsFromSheet(workbook, 'ad group');
-        const campaigns = campaignRows.map(normalizeCampaignRow);
-        const adGroupTemplateRow = adGroupRows.find(row => {
-            const status = cleanText(row['Ad group status']);
-            return status && !status.startsWith('Total:');
-        }) || {};
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, raw: false, defval: '' });
 
-        const data = {
-            generatedAt: new Date().toISOString(),
-            dateRange: {
-                start: '2026-04-11',
-                end: '2026-05-08',
-                label: 'Apr 11 - May 8, 2026'
-            },
-            campaigns,
-            adGroupTemplate: normalizeAdGroupTemplate(adGroupTemplateRow),
-            assets: buildAssetRows(),
-            assetSummary: {
-                headlines: '3/5',
-                descriptions: '3/5',
-                images: '10/20',
-                videos: '0/20'
+        if (jsonData.length < 4) {
+            console.error(`File ${filePath} doesn't have enough rows for conversion.`);
+            return;
+        }
+
+        const labels = jsonData[1];
+        const keys = jsonData[2];
+        const types = jsonData[3];
+        const dataRows = jsonData.slice(4);
+
+        const columns = [];
+        for (let i = 0; i < keys.length; i++) {
+            if (keys[i] && !keys[i].startsWith('//')) {
+                columns.push({
+                    width: 100,
+                    key: keys[i],
+                    label: labels[i] || keys[i]
+                });
             }
-        };
+        }
 
-        const googleAdsDataPath = path.join(OUTPUT_DIR, 'googleAdsData.json');
-        fs.writeFileSync(googleAdsDataPath, JSON.stringify(data, null, 2), 'utf8');
-        console.log(`Successfully created ${googleAdsDataPath}`);
+        const columnsPath = path.join(OUTPUT_DIR, 'columns.json');
+        fs.writeFileSync(columnsPath, JSON.stringify(columns, null, 2), 'utf8');
+
+        const tableData = [];
+        for (let i = 0; i < dataRows.length; i++) {
+            const row = dataRows[i];
+            const obj = {};
+
+            if (!row || row.every(cell => cell === undefined || cell === null || cell === '')) {
+                continue;
+            }
+
+            for (let j = 0; j < keys.length; j++) {
+                const key = keys[j];
+                if (key && !key.startsWith('//')) {
+                    const value = row[j];
+                    const type = types[j] || 'string';
+                    obj[key] = convertByType(value, type, key);
+                }
+            }
+
+            if (Object.keys(obj).length > 0) {
+                tableData.push(obj);
+            }
+        }
+
+        const tableDataPath = path.join(OUTPUT_DIR, 'tableData.json');
+        fs.writeFileSync(tableDataPath, JSON.stringify(tableData, null, 2), 'utf8');
+        console.log(`Successfully created ${tableDataPath}`);
     } catch (error) {
         console.error(`Error processing file ${filePath}:`, error.message);
     }
@@ -425,10 +450,10 @@ async function main() {
 
 async function googleAdsMain() {
     console.log('Starting Google Ads workbook conversion...');
-    console.log(`Input file: ${GOOGLE_ADS_INPUT_FILE}`);
+    console.log(`Input file: ${INPUT_FILE}`);
     console.log(`Output directory: ${OUTPUT_DIR}`);
 
-    await processGoogleAdsWorkbook(GOOGLE_ADS_INPUT_FILE);
+    await processGoogleAdsWorkbook(INPUT_FILE);
     console.log('Google Ads conversion completed!');
 }
 

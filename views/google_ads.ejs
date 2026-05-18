@@ -240,7 +240,7 @@
                             <span class="material-symbols-outlined">arrow_drop_down</span>
                             <div v-if="dropdown === 'campaign'" class="ga-dropdown wide">
                                 <a v-for="campaign in campaignRows" :key="campaign.id"
-                                    :href="campaignHref(campaign.id)">
+                                    :href="campaignHref(campaign.campaign)">
                                     {{ campaign.campaign }}
                                 </a>
                             </div>
@@ -396,14 +396,18 @@
                                     <th>Budget</th>
                                     <th>Status</th>
                                     <th>Optimization score</th>
-                                    <th>Account</th>
                                     <th>Campaign type</th>
                                     <th>Cost / Install</th>
                                     <th>Cost / In-app action</th>
                                     <th>View-through conv.</th>
                                     <th>Installs</th>
                                     <th>In-app actions</th>
+                                    <th>Particlpated in-app actions</th>
                                     <th>Cost</th>
+                                    <th>Cost / Particlpated in-app actions</th>
+                                    <th>Conv. rate</th>
+                                    <th>Conversions</th>
+                                    <th>Cost / conv.</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -411,28 +415,28 @@
                                     <td></td>
                                     <td><span class="material-symbols-outlined">expand_more</span></td>
                                     <td><span class="material-symbols-outlined">folder</span> Drafts in progress: 0</td>
-                                    <td colspan="11"></td>
+                                    <td colspan="14"></td>
                                 </tr>
-                                <tr v-for="campaign in campaignRows" :key="campaign.id">
+                                <tr v-for="(campaign, index) in campaignRows" :key="campaign.id || index">
                                     <td><span class="ga-checkbox"></span></td>
                                     <td class="state-col">
                                         <div class="ga-status-cell"
-                                            :class="{ open: dropdown === statusDropdownName(campaign.id) }" @click.stop>
+                                            :class="{ open: dropdown === statusDropdownName(campaign.id || index) }" @click.stop>
                                             <button class="ga-status-trigger" type="button"
                                                 :aria-label="`Change campaign status for ${campaign.campaign}`"
-                                                :aria-expanded="dropdown === statusDropdownName(campaign.id)"
-                                                @click.stop="toggleStatusMenu(campaign.id)">
+                                                :aria-expanded="dropdown === statusDropdownName(campaign.id || index)"
+                                                @click.stop="toggleStatusMenu(campaign.id || index)">
                                                 <span
-                                                    :class="['ga-status-marker', statusDotClass(campaign.campaignStatus)]"
+                                                    :class="['ga-status-marker', statusDotClass(getStatusFromRow(campaign))]"
                                                     aria-hidden="true"></span>
                                                 <span class="material-symbols-outlined ga-status-arrow"
                                                     aria-hidden="true">arrow_drop_down</span>
                                             </button>
-                                            <div v-if="dropdown === statusDropdownName(campaign.id)"
+                                            <div v-if="dropdown === statusDropdownName(campaign.id || index)"
                                                 class="ga-status-menu" role="menu">
                                                 <button v-for="option in statusMenuOptions" :key="option.state"
                                                     type="button" role="menuitem"
-                                                    :class="{ active: campaign.campaignStatus === option.state }"
+                                                    :class="{ active: getStatusFromRow(campaign) === option.state }"
                                                     @click.stop="setCampaignStatus(campaign, option.state)">
                                                     <span :class="['ga-status-marker', statusDotClass(option.state)]"
                                                         aria-hidden="true"></span>
@@ -444,33 +448,42 @@
                                     <td class="name-col">
                                         <span
                                             class="material-symbols-outlined ga-campaign-type">download_for_offline</span>
-                                        <a :href="campaignHref(campaign.id)">{{ campaign.campaign }}</a>
+                                        <a :href="campaignHref(campaign.campaign)">{{ campaign.campaign }}</a>
                                     </td>
-                                    <td>{{ campaign.budget }}</td>
-                                    <td><span class="ga-dashed">{{ campaign.status }}</span></td>
-                                    <td>{{ dash(campaign.optimizationScore) }}</td>
-                                    <td><a href="#">{{ campaign.account }}</a></td>
-                                    <td>{{ campaign.campaignType }}</td>
+                                    <td>{{ fixed(campaign.Buget || campaign.budget) }}</td>
+                                    <td><span class="ga-dashed">{{ dash(campaign.Status || campaign.status) }}</span></td>
+                                    <td>{{ dash(campaign.OptimizationScore || campaign.optimizationScore) }}</td>
+                                    <td>{{ dash(campaign.CampaignType || campaign.campaignType) }}</td>
                                     <td>{{ moneyOrDash(campaign.costPerInstall) }}</td>
-                                    <td>{{ moneyOrDash(campaign.costPerInAppAction) }}</td>
-                                    <td>{{ numberOrZero(campaign.viewThroughConv) }}</td>
+                                    <td>{{ moneyOrDash(campaign.costPerInAppActions || campaign.costPerInAppAction) }}</td>
+                                    <td>{{ numberOrZero(campaign.ViewThroughConv || campaign.viewThroughConv) }}</td>
                                     <td>{{ numberOrZero(campaign.installs) }}</td>
                                     <td>{{ numberOrZero(campaign.inAppActions) }}</td>
+                                    <td>{{ numberOrZero(campaign.ParticipatedInAppActions) }}</td>
                                     <td>{{ money(campaign.cost) }}</td>
+                                    <td>{{ moneyOrDash(campaign.CostPerParticipatedInAppAction) }}</td>
+                                    <td>{{ percent(campaign.ConvRate) }}</td>
+                                    <td>{{ numberOrZero(campaign.Conversions) }}</td>
+                                    <td>{{ moneyOrDash(campaign.CostPerConv) }}</td>
                                 </tr>
                                 <tr class="total-row">
-                                    <td colspan="3">Total: All but removed campaigns in your current view</td>
-                                    <td></td>
-                                    <td></td>
+                                    <td colspan="3">Total: All campaigns in your current view</td>
                                     <td>-</td>
-                                    <td></td>
-                                    <td></td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
                                     <td>-</td>
                                     <td>-</td>
                                     <td>{{ numberOrZero(totals.viewThroughConv) }}</td>
                                     <td>{{ numberOrZero(totals.installs) }}</td>
                                     <td>{{ numberOrZero(totals.inAppActions) }}</td>
+                                    <td>-</td>
                                     <td>{{ money(totals.cost) }}</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -491,43 +504,50 @@
                                     <th>View-through conv.</th>
                                     <th>Brand Inclusions</th>
                                     <th>Locations of interest</th>
+                                    <th>Installs</th>
+                                    <th>In-app actions</th>
+                                    <th>Particlpated in-app actions</th>
+                                    <th>Cost</th>
+                                    <th>Cost / Particlpated in-app actions</th>
+                                    <th>Conv. rate</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
+                                <tr v-for="(adGroup, index) in adGroupRows" :key="adGroup.id">
                                     <td><span class="ga-checkbox"></span></td>
-                                    <td><span class="ga-status-dot enabled"></span></td>
+                                    <td><span :class="'ga-status-dot ' + statusDotClass(getStatusFromRow(adGroup))"></span></td>
                                     <td class="name-col"><a :href="adAssetsHref">{{ adGroup.adGroup }}</a></td>
-                                    <td><span class="danger">Not eligible</span><br><span class="ga-dashed">Ad group is
-                                            disapproved</span><br><span class="ga-dashed">Campaign is paused</span></td>
-                                    <td>{{ adGroup.targetCpa }}</td>
-                                    <td>{{ numberOrZero(selectedConversions) }}</td>
-                                    <td>{{ moneyOrDash(selectedCostPerConv) }}</td>
-                                    <td>{{ moneyOrDash(selectedCostPerInstall) }}</td>
-                                    <td>{{ moneyOrDash(selectedCostPerInAppAction) }}</td>
-                                    <td>{{ numberOrZero(selectedCampaign ? selectedCampaign.viewThroughConv : 0) }}</td>
-                                    <td>-</td>
-                                    <td>-</td>
+                                    <td><span class="ga-dashed">{{ dash(adGroup.Status || adGroup.status) }}</span></td>
+                                    <td>{{ fixed(adGroup.TargetCPA || adGroup.targetCpa) }}</td>
+                                    <td>{{ numberOrZero(adGroup.Conversions) }}</td>
+                                    <td>{{ moneyOrDash(adGroup.CostPerConv) }}</td>
+                                    <td>{{ moneyOrDash(adGroup.costPerInstall) }}</td>
+                                    <td>{{ moneyOrDash(adGroup.costPerInAppActions) }}</td>
+                                    <td>{{ numberOrZero(adGroup.ViewThroughConv) }}</td>
+                                    <td>{{ dash(adGroup.BrandInclusions) }}</td>
+                                    <td>{{ dash(adGroup.LocationsOfInterest) }}</td>
+                                    <td>{{ numberOrZero(adGroup.installs) }}</td>
+                                    <td>{{ numberOrZero(adGroup.inAppActions) }}</td>
+                                    <td>{{ numberOrZero(adGroup.ParticipatedInAppActions) }}</td>
+                                    <td>{{ money(adGroup.cost) }}</td>
+                                    <td>{{ moneyOrDash(adGroup.CostPerParticipatedInAppAction) }}</td>
+                                    <td>{{ percent(adGroup.ConvRate) }}</td>
                                 </tr>
-                                <tr class="total-row">
-                                    <td colspan="5">Total: All but removed ad groups in your campaign</td>
-                                    <td>{{ numberOrZero(selectedConversions) }}</td>
-                                    <td>{{ money(selectedCostPerConv) }}</td>
-                                    <td>-</td>
-                                    <td>-</td>
-                                    <td>{{ numberOrZero(selectedCampaign ? selectedCampaign.viewThroughConv : 0) }}</td>
+                                <tr v-if="adGroupRows.length" class="total-row">
+                                    <td colspan="5">Total: {{ adGroupRows.length }} ad groups</td>
+                                    <td>{{ numberOrZero(adGroupTotal.Conversions) }}</td>
+                                    <td>{{ money(adGroupTotal.CostPerConv) }}</td>
+                                    <td>{{ moneyOrDash(adGroupTotal.costPerInstall) }}</td>
+                                    <td>{{ moneyOrDash(adGroupTotal.costPerInAppActions) }}</td>
+                                    <td>{{ numberOrZero(adGroupTotal.ViewThroughConv) }}</td>
                                     <td></td>
                                     <td></td>
-                                </tr>
-                                <tr class="total-row">
-                                    <td colspan="5">Total: Campaign</td>
-                                    <td>{{ numberOrZero(selectedConversions) }}</td>
-                                    <td>{{ money(selectedCostPerConv) }}</td>
-                                    <td>-</td>
-                                    <td>-</td>
-                                    <td>{{ numberOrZero(selectedCampaign ? selectedCampaign.viewThroughConv : 0) }}</td>
-                                    <td></td>
-                                    <td></td>
+                                    <td>{{ numberOrZero(adGroupTotal.installs) }}</td>
+                                    <td>{{ numberOrZero(adGroupTotal.inAppActions) }}</td>
+                                    <td>{{ numberOrZero(adGroupTotal.ParticipatedInAppActions) }}</td>
+                                    <td>{{ money(adGroupTotal.cost) }}</td>
+                                    <td>{{ moneyOrDash(adGroupTotal.CostPerParticipatedInAppAction) }}</td>
+                                    <td>{{ percent(adGroupTotal.ConvRate) }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -644,9 +664,6 @@
             {{ tooltip.text }}
         </div>
     </div>
-    <script>
-        window.GOOGLE_ADS_PAGE = <% - JSON.stringify(page) %>;
-    </script>
     <script src="/js/vue.global.js"></script>
     <script src="/google_ads.js"></script>
     <script>

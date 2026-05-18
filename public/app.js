@@ -4,6 +4,7 @@ createApp({
     data() {
         const defaultColumnWidths = {
             campaign: 300,
+            campaignId: 150,
             cost: 120,
             impressions: 120,
             clicks: 120,
@@ -33,6 +34,7 @@ createApp({
             sortKey: '',
             sortOrderList: {
                 campaign: 'desc',
+                campaignId: 'desc',
                 cost: 'desc',
                 impressions: 'desc',
                 clicks: 'desc',
@@ -44,6 +46,7 @@ createApp({
             },
             columnOrder: [
                 'campaign',
+                'campaignId',
                 'cost',
                 'impressions',
                 'clicks',
@@ -55,6 +58,7 @@ createApp({
             ],
             columnCssVarNames: {
                 campaign: 'campaign',
+                campaignId: 'campaign-id',
                 cost: 'cost',
                 impressions: 'impressions',
                 clicks: 'clicks',
@@ -70,6 +74,7 @@ createApp({
             },
             columnMinWidths: {
                 campaign: 180,
+                campaignId: 100,
                 cost: 88,
                 impressions: 88,
                 clicks: 88,
@@ -108,7 +113,7 @@ createApp({
             calendarMonth: new Date(),
             selectingStartDate: true,
             dateSelectRef: null
-            
+
         }
     },
     computed: {
@@ -250,8 +255,12 @@ createApp({
             }
             return result;
         },
+        hasCampaignId() {
+            return this.campaigns.some(c => c.campaignId !== undefined && c.campaignId !== null && c.campaignId !== '');
+        },
         totalColumnWidth() {
             return this.columnOrder.reduce((total, columnKey) => {
+                if (columnKey === 'campaignId' && !this.hasCampaignId) return total;
                 return total + this.getColumnWidth(columnKey);
             }, 0);
         },
@@ -260,7 +269,11 @@ createApp({
                 '--table-total-width': `${this.totalColumnWidth}px`
             };
             this.columnOrder.forEach(columnKey => {
-                style[`--table-col-${this.columnCssVarNames[columnKey]}`] = `${this.getColumnWidth(columnKey)}px`;
+                if (columnKey === 'campaignId' && !this.hasCampaignId) {
+                    style[`--table-col-${this.columnCssVarNames[columnKey]}`] = '0px';
+                } else {
+                    style[`--table-col-${this.columnCssVarNames[columnKey]}`] = `${this.getColumnWidth(columnKey)}px`;
+                }
             });
             return style;
         }

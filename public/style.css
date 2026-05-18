@@ -321,7 +321,7 @@ body {
         translateX(-50%)
         translateY(-6px)
         scale(0);
-    
+
     transform-origin: top center;
 
     background: rgba(32,33,36,.95);
@@ -1113,6 +1113,7 @@ input:checked+.toggle-slider:before {
     --table-line-width: 1px;
     --table-total-width: 1360px;
     --table-col-campaign: 300px;
+    --table-col-campaign-id: 150px;
     --table-col-cost: 120px;
     --table-col-impressions: 120px;
     --table-col-clicks: 120px;
@@ -1133,10 +1134,23 @@ input:checked+.toggle-slider:before {
     min-height: auto;
 }
 
-/* 表格容器 - 直接让表格可滚动 */
+/* 表格容器 */
 .table-wrapper {
+    background-color: #fff;
+    padding: 0;
+    margin: 8px;
+    border: var(--table-line-width) solid var(--table-line-color);
+    border-radius: 7px;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 400px);
+}
+
+/* 表格滚动区域 - 仅表格可横向滚动 */
+.table-scroll {
     overflow-x: auto;
     overflow-y: hidden;
+    flex-shrink: 0;
 }
 
 .data-table {
@@ -1151,6 +1165,7 @@ input:checked+.toggle-slider:before {
     flex-direction: column;
     /* 让表格高度自适应内容，不强制100% */
     flex: 0 1 auto;
+    overflow-x: hidden;
 }
 
 /* 表头固定 */
@@ -1217,41 +1232,46 @@ input:checked+.toggle-slider:before {
 
 .data-table th:nth-child(2),
 .data-table td:nth-child(2) {
-    width: var(--table-col-cost);
+    width: var(--table-col-campaign-id);
 }
 
 .data-table th:nth-child(3),
 .data-table td:nth-child(3) {
-    width: var(--table-col-impressions);
+    width: var(--table-col-cost);
 }
 
 .data-table th:nth-child(4),
 .data-table td:nth-child(4) {
-    width: var(--table-col-clicks);
+    width: var(--table-col-impressions);
 }
 
 .data-table th:nth-child(5),
 .data-table td:nth-child(5) {
-    width: var(--table-col-installs);
+    width: var(--table-col-clicks);
 }
 
 .data-table th:nth-child(6),
 .data-table td:nth-child(6) {
-    width: var(--table-col-in-app-actions);
+    width: var(--table-col-installs);
 }
 
 .data-table th:nth-child(7),
 .data-table td:nth-child(7) {
-    width: var(--table-col-cost-per-install);
+    width: var(--table-col-in-app-actions);
 }
 
 .data-table th:nth-child(8),
 .data-table td:nth-child(8) {
-    width: var(--table-col-cost-per-in-app-actions);
+    width: var(--table-col-cost-per-install);
 }
 
 .data-table th:nth-child(9),
 .data-table td:nth-child(9) {
+    width: var(--table-col-cost-per-in-app-actions);
+}
+
+.data-table th:nth-child(10),
+.data-table td:nth-child(10) {
     width: var(--table-col-ctr);
 }
 
@@ -1397,13 +1417,13 @@ input:checked+.toggle-slider:before {
 .data-table tr:hover .column-resize-handle::after {
     background-color: #4285f4;
     /* 配合之前的平滑过渡效果 */
-    transition: background-color 0.2s ease;
+    transition: background-color 0.5s ease;
 }
 
 /* 初始状态（非 Hover 时） */
 .data-table .column-resize-handle::after {
     background-color: transparent;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.5s ease;
 }
 /* .column-resize-handle:hover::after,
 .column-resize-handle.resizing::after {
@@ -2223,7 +2243,7 @@ body.is-column-resizing * {
     margin:0;
     padding: 0 25px;
     cursor: pointer;
-    
+
 }
 .disclaimer{
     margin-top: 35px;
@@ -2239,6 +2259,6 @@ body.is-column-resizing * {
     color: #5F6368;
 }
 .dis-txt a {
-    color: #1a73e8;          
+    color: #1a73e8;
     text-decoration: none;
 }

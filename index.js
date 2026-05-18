@@ -2,6 +2,7 @@ const Koa = require('koa');
 const Router = require('koa-router');
 const views = require('koa-views');
 const serve = require('koa-static');
+const koaMount = require('koa-mount');
 const path = require('path');
 const https = require('https');
 const fs = require('fs');
@@ -17,6 +18,7 @@ app.use(views(path.join(__dirname, 'views'), {
 
 // 静态资源服务
 app.use(serve(path.join(__dirname, 'public')));
+app.use(koaMount('/adassets', serve(path.join(__dirname, 'adassets'))));
 
 async function renderHomePage(ctx) {
   // 调用 transform.js 中的函数，将 Excel 文件转换为 JSON 文件
@@ -54,6 +56,73 @@ router.get('/aw/adgroups', async (ctx) => {
 
 router.get('/aw/adassets', async (ctx) => {
   await renderGoogleAdsPage(ctx, 'adassets');
+});
+
+// Ad assets 资源接口
+router.get('/api/adassets/plan1', async (ctx) => {
+  const baseDir = path.join(__dirname, 'adassets', 'plan1');
+  const assets = [];
+
+  // 10 条图片
+  for (let i = 1; i <= 10; i++) {
+    const imgPath = path.join(baseDir, `img${i}.jpg`);
+    assets.push({
+      id: `img-${i}`,
+      asset: `Image ${i}`,
+      assetType: 'Image',
+      status: 'Eligible',
+      performance: 'Pending',
+      image: `/adassets/plan1/img${i}.jpg`,
+      share: Math.random() * 0.3 + 0.02
+    });
+  }
+
+  // 3 条 headline
+  for (let i = 1; i <= 3; i++) {
+    const txtPath = path.join(baseDir, `headline${i}.txt`);
+    let text = '';
+    try { text = fs.readFileSync(txtPath, 'utf-8').trim(); } catch (e) {}
+    assets.push({
+      id: `headline-${i}`,
+      asset: text || `Headline ${i}`,
+      assetType: 'Headline',
+      status: 'Eligible',
+      performance: 'Pending',
+      headlineText: text || `Headline ${i}`,
+      share: Math.random() * 0.3 + 0.02
+    });
+  }
+
+  // 3 条 description
+  for (let i = 1; i <= 3; i++) {
+    const txtPath = path.join(baseDir, `description${i}.txt`);
+    let text = '';
+    try { text = fs.readFileSync(txtPath, 'utf-8').trim(); } catch (e) {}
+    assets.push({
+      id: `desc-${i}`,
+      asset: text || `Description ${i}`,
+      assetType: 'Description',
+      status: 'Eligible',
+      performance: 'Pending',
+      descriptionText: text || `Description ${i}`,
+      share: Math.random() * 0.3 + 0.02
+    });
+  }
+
+  ctx.body = { assets };
+});
+
+// Ad assets 图片接口
+router.get('/api/adassets/plan1/image/:id', async (ctx) => {
+  const imgPath = path.join(__dirname, 'adassets', 'plan1', `img${ctx.params.id}.jpg`);
+  try {
+    const imgBuffer = fs.readFileSync(imgPath);
+    ctx.type = 'image/jpeg';
+    ctx.body = imgBuffer;
+  } catch (e) {
+    ctx.status = 404;
+    ctx.body = 'Not found';
+  }
 });
 
 router.get('/adsmanager/reporting/manage', async (ctx) => {
