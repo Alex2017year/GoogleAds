@@ -6,8 +6,18 @@
   },
   {
     "width": 100,
+    "key": "AdGroup",
+    "label": "Ad group"
+  },
+  {
+    "width": 100,
     "key": "campaign",
     "label": "Campaign"
+  },
+  {
+    "width": 100,
+    "key": "campaignId",
+    "label": "campaignId"
   },
   {
     "width": 100,
@@ -48,5 +58,75 @@
     "width": 100,
     "key": "ctr",
     "label": "CTR"
+  },
+  {
+    "width": 100,
+    "key": "Buget",
+    "label": "Buget"
+  },
+  {
+    "width": 100,
+    "key": "Status",
+    "label": "Status"
+  },
+  {
+    "width": 100,
+    "key": "OptimizationScore",
+    "label": "Optimization score"
+  },
+  {
+    "width": 100,
+    "key": "Account",
+    "label": "Account"
+  },
+  {
+    "width": 100,
+    "key": "CampaignType",
+    "label": "Campaign type"
+  },
+  {
+    "width": 100,
+    "key": "ViewThroughConv",
+    "label": "View-through conv."
+  },
+  {
+    "width": 100,
+    "key": "ParticlpatedInAppActions",
+    "label": "Particlpated in-app actions"
+  },
+  {
+    "width": 100,
+    "key": "CostParticlpatedInAppActions",
+    "label": "Cost / Particlpated in-app actions"
+  },
+  {
+    "width": 100,
+    "key": "ConvRate",
+    "label": "Conv. rate"
+  },
+  {
+    "width": 100,
+    "key": "Conversions",
+    "label": "Conversions"
+  },
+  {
+    "width": 100,
+    "key": "CostPerConv",
+    "label": "Cost / conv."
+  },
+  {
+    "width": 100,
+    "key": "TargetCPA",
+    "label": "Target CPA"
+  },
+  {
+    "width": 100,
+    "key": "BrandInclusions",
+    "label": "Brand Inclusions"
+  },
+  {
+    "width": 100,
+    "key": "LocationsOfInterest",
+    "label": "Locations of interest"
   }
 ]

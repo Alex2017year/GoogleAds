@@ -454,7 +454,7 @@
 
         </transition>
 
-  
+
 
         <!-- 筛选栏 -->
         <div class="filter-bar">
@@ -462,11 +462,12 @@
                 <div class="thead">Add filter</div>
                 <input type="text" v-model="filterText" @input="saveFilter" class="field" placeholder="">
             </div>
-            
+
         </div>
 
         <!-- 表格区域 -->
         <div class="table-wrapper">
+            <div class="table-scroll">
             <table class="data-table" :class="{ 'is-reloading': isRefreshing }" :style="tableColumnStyle">
                 <thead>
                     <tr>
@@ -479,11 +480,26 @@
                                     'arrow_upward' :
                                     'arrow_downward'
                                     }}</span>
-                                    <span class="material-symbols-outlined">arrow_drop_down</span>
+                                <span class="material-symbols-outlined">arrow_drop_down</span>
                             </div>
                             <span class="column-resize-handle" :class="{ resizing: resizingColumn === 'campaign' }"
                                 @mousedown.stop.prevent="startColumnResize($event, 'campaign')"
                                 @touchstart.stop.prevent="startColumnResize($event, 'campaign')" @click.stop></span>
+                        </th>
+                        <th v-show="hasCampaignId" class="col-campaign" @click="sortBy('campaignId')">
+                            <div class="th-content" style="justify-content: flex-start;">
+                                <span class="span-title-child">Campaign ID</span>
+                                <span v-if="sortKey === 'campaignId'"
+                                    class="material-symbols-outlined span-arrow-child">{{
+                                    sortOrderList.campaignId === 'asc' ?
+                                    'arrow_upward' :
+                                    'arrow_downward'
+                                    }}</span>
+                                <span class="material-symbols-outlined">arrow_drop_down</span>
+                            </div>
+                            <span class="column-resize-handle" :class="{ resizing: resizingColumn === 'campaignId' }"
+                                @mousedown.stop.prevent="startColumnResize($event, 'campaignId')"
+                                @touchstart.stop.prevent="startColumnResize($event, 'campaignId')" @click.stop></span>
                         </th>
                         <th class="col-metric">
                             <div class="th-content">
@@ -581,7 +597,13 @@
                                     'arrow_downward'
                                     }}</span>
                                 <span class="span-title-child">CTR</span>
+                                <span class="material-symbols-outlined">arrow_drop_down</span>
                             </div>
+                            <span class="column-resize-handle"
+                                :class="{ resizing: resizingColumn === 'ctr' }"
+                                @mousedown.stop.prevent="startColumnResize($event, 'ctr')"
+                                @touchstart.stop.prevent="startColumnResize($event, 'ctr')"
+                                @click.stop></span>
                         </th>
                     </tr>
                 </thead>
@@ -589,6 +611,7 @@
                     <tr v-for="campaign in paginatedCampaigns" :key="campaign.id"
                         :class="{ 'selected': campaign.selected }">
                         <td>{{ campaign.campaign }} </td>
+                        <td v-show="hasCampaignId">{{ campaign.campaignId }}</td>
                         <td class="col-metric">{{ formatCurrency(campaign.cost) }}</td>
                         <td class="col-metric">{{ formatNumber(campaign.impressions) }}</td>
                         <td class="col-metric">{{ formatNumber(campaign.clicks) }}</td>
@@ -599,12 +622,13 @@
                         <td class="col-metric">{{ formatPercent(campaign.ctr) }}</td>
                     </tr>
                     <tr v-if="!isRefreshing && filteredCampaigns.length === 0" class="empty-state-row">
-                        <td colspan="9" class="empty-state-cell">No statistics match your filters</td>
+                        <td colspan="10" class="empty-state-cell">No statistics match your filters</td>
                     </tr>
                 </tbody>
                 <tfoot>
                     <tr class="total-row">
                         <td class="fw500">Total</td>
+                        <td v-show="hasCampaignId" class="col-metric fw500"></td>
                         <td class="col-metric fw500">—</td>
                         <td class="col-metric fw500">{{ formatNumber(totals.impressions) }}</td>
                         <td class="col-metric fw500">{{ formatNumber(totals.clicks) }}</td>
@@ -616,6 +640,7 @@
                     </tr>
                 </tfoot>
             </table>
+            </div>
 
             <!-- 分页控件 -->
             <div class="pagination" v-if="showPagination">
@@ -662,7 +687,7 @@ keyboard_arrow_up
 
         <!-- 文本输入区域 -->
         <div class="input-field">
-           
+
             <textarea class="report-textarea" placeholder="Describe the report you want to generate"></textarea>
         </div>
 
@@ -682,12 +707,12 @@ keyboard_arrow_up
                 <button class="chip">What are my top campaigns?</button>
             </div>
             <span class="view-right-sugg">Refresh suggestions</span>
-                
-                
-                   
-                    
-               
-           
+
+
+
+
+
+
         </div>
 
         <!-- 免责声明 -->
