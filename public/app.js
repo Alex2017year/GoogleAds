@@ -215,6 +215,12 @@ createApp({
         endRow() {
             return Math.min(this.currentPage * this.pageSize, this.filteredCampaigns.length);
         },
+        canGoPreviousPage() {
+            return this.currentPage > 1;
+        },
+        canGoNextPage() {
+            return this.currentPage < this.totalPages;
+        },
         yesterdayDate() {
             const yesterday = new Date();
             yesterday.setDate(yesterday.getDate() - 1);

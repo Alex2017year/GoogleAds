@@ -1540,8 +1540,14 @@ body.is-column-resizing * {
     align-items: center;
     gap: 8px;
     cursor: pointer;
-    color: #bdbdbd;
+    color: #5f6368;
     font-size: 32px !important;
+}
+
+.page-nav>span.disabled {
+    color: #bdbdbd;
+    cursor: default;
+    pointer-events: none;
 }
 
 .page-btn {
