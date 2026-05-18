@@ -762,6 +762,14 @@
     padding: 6px 0;
 }
 
+.ga-vertical-divider {
+    width: 1px;
+    height: 32px;
+    color: rgb(95, 99, 104);
+    background-color: rgb(218, 220, 224);
+    margin: 0 4px;
+}
+
 .ga-dropdown.wide {
     width: 420px;
 }
@@ -880,7 +888,7 @@
 .ga-date-row {
     gap: 18px;
     color: #5f6368;
-    font-size: 18px;
+    font-size: 14px;
 }
 
 .ga-date-button {
@@ -917,16 +925,16 @@
 
 .ga-info-banner {
     margin: 20px 28px;
-    min-height: 58px;
+    /* min-height: 58px; */
     border: 1px solid #1a73e8;
     border-radius: 8px;
     background: #fff;
     display: flex;
     align-items: center;
     gap: 22px;
-    padding: 0 28px;
+    padding: 10px 20px;
     color: #3c4043;
-    font-size: 18px;
+    font-size: 14px;
 }
 
 .ga-info-banner .material-symbols-outlined {
@@ -935,6 +943,15 @@
 
 .ga-info-banner span:nth-child(2) {
     flex: 1;
+}
+
+.ga-metric-delta {
+    display: flex;
+    align-items: center;
+}
+
+.ga-metric-delta:last-child i {
+    display: none;
 }
 
 .ga-metrics {
@@ -1131,7 +1148,7 @@
 
 .ga-table-panel {
     position: relative;
-    margin: 0 28px 18px;
+    margin: 0 28px 28px;
     background: #fff;
     box-shadow: 0 2px 4px rgba(60, 64, 67, 0.24);
     padding-top: 8px;
@@ -1141,7 +1158,7 @@ button.ga-floating-add {
     position: sticky;
     z-index: 20;
     left: 22px;
-    top: 80px;
+    top: 100px;
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -1299,7 +1316,7 @@ button.ga-floating-add .material-symbols-outlined {
 
 .ga-data-table th,
 .ga-data-table td {
-    min-width: 126px;
+    min-width: 42px;
     height: 64px;
     border-right: 1px solid #dadce0;
     border-bottom: 1px solid #dadce0;
@@ -1317,15 +1334,15 @@ button.ga-floating-add .material-symbols-outlined {
 }
 
 .ga-data-table .select-col {
-    min-width: 54px;
-    width: 54px;
+    width: 24px;
+    font-size: 13px;
     text-align: center;
 }
 
 .ga-data-table .state-col {
-    min-width: 46px;
     width: 46px;
-    text-align: center;
+    text-align: left;
+    vertical-align: left;
     overflow: visible;
     position: relative;
 }
@@ -1344,6 +1361,21 @@ button.ga-floating-add .material-symbols-outlined {
     min-width: 320px;
 }
 
+.ga-data-table .name-col .gear {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  opacity: 0;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.ga-data-table .name-col:hover .gear {
+  opacity: 1;
+}
+
 .ga-data-table th .material-symbols-outlined {
     font-size: 18px;
     vertical-align: middle;
@@ -1354,8 +1386,8 @@ button.ga-floating-add .material-symbols-outlined {
 }
 
 .ga-checkbox {
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     border: 2px solid #777;
     border-radius: 2px;
     display: inline-block;
@@ -1387,6 +1419,8 @@ button.ga-floating-add .material-symbols-outlined {
 .ga-status-cell {
     position: relative;
     display: flex;
+    align-self: center;
+    width: 42px;
     justify-content: center;
 }
 
@@ -1626,7 +1660,7 @@ button.ga-floating-add .material-symbols-outlined {
     gap: 2px;
     padding: 16px 40px 28px;
     color: #3c4043;
-    font-size: 16px;
+    font-size: 12px;
     background: #eef0f1;
     box-shadow: inset 0 2px 4px rgba(60, 64, 67, 0.18);
 }

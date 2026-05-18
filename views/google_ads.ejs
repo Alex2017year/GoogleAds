@@ -70,8 +70,9 @@
                     <span class="material-symbols-outlined">help</span>
                     <span>Help</span>
                 </button>
-                 <!-- @click="isNotificationsOpen = !isNotificationsOpen" -->
-                <button ref="notificationButton" class="ga-tool-button ga-notifications" type="button" @click.stop="toggleNotifications">
+                <!-- @click="isNotificationsOpen = !isNotificationsOpen" -->
+                <button ref="notificationButton" class="ga-tool-button ga-notifications" type="button"
+                    @click.stop="toggleNotifications">
                     <span class="material-symbols-outlined">notifications</span>
                     <span>Notifications</span>
                     <b>!</b>
@@ -101,7 +102,9 @@
                             <div class="ga-notification-icon warn">i</div>
                             <div class="ga-notification-content">
                                 <h4>Thanks for verifying 1 account!</h4>
-                                <p>Thanks for verifying! The verified advertiser<br>name and location for each of these accounts<br>will now appear in your ad disclosures. We'll let<br> you know if we need more information in<br>future.</p>
+                                <p>Thanks for verifying! The verified advertiser<br>name and location for each of these
+                                    accounts<br>will now appear in your ad disclosures. We'll let<br> you know if we
+                                    need more information in<br>future.</p>
                                 <button class="ga-text-btn">Learn more</button>
                             </div>
                         </div>
@@ -227,7 +230,7 @@
                     <div class="ga-selectors">
                         <div class="ga-selector active" v-if="!isContextBarHidden" @click.stop="toggleDropdown('view')">
                             <small>View (2 filters)</small>
-                            <strong><span class="material-symbols-outlined">home</span> All campaigns</strong>
+                            <a><span class="material-symbols-outlined">home</span> All campaigns</a>
                             <span class="material-symbols-outlined">arrow_drop_down</span>
                             <div v-if="dropdown === 'view'" class="ga-dropdown">
                                 <a href="/aw/campaigns">All campaigns</a>
@@ -236,7 +239,7 @@
                         <div class="ga-selector" :class="{ active: selectedCampaign }"
                             @click.stop="toggleDropdown('campaign')">
                             <small>{{ campaignSelectorLabel }}</small>
-                            <strong>{{ selectedCampaign ? selectedCampaign.campaign : 'Select a campaign' }}</strong>
+                            <a>{{ selectedCampaign ? selectedCampaign.campaign : 'Select a campaign' }}</a>
                             <span class="material-symbols-outlined">arrow_drop_down</span>
                             <div v-if="dropdown === 'campaign'" class="ga-dropdown wide">
                                 <a v-for="campaign in campaignRows" :key="campaign.id"
@@ -248,7 +251,7 @@
                         <div v-if="pageMode !== 'campaigns'" class="ga-selector"
                             :class="{ active: pageMode === 'adassets' }" @click.stop="toggleDropdown('adgroup')">
                             <small>Ad groups (1)</small>
-                            <strong>{{ pageMode === 'adassets' ? adGroup.adGroup : 'Select an ad group' }}</strong>
+                            <a>{{ pageMode === 'adassets' ? adGroup.adGroup : 'Select an ad group' }}</a>
                             <span class="material-symbols-outlined">arrow_drop_down</span>
                             <div v-if="dropdown === 'adgroup'" class="ga-dropdown">
                                 <a :href="adAssetsHref">{{ adGroup.adGroup }}</a>
@@ -278,7 +281,7 @@
                         <div v-if="isContextBarHidden" class="ga-page-head-selector-wrapper">
                             <div class="ga-selector active" @click.stop="toggleDropdown('view')">
                                 <small>View (2 filters)</small>
-                                <strong><span class="material-symbols-outlined">home</span> All campaigns</strong>
+                                <a><span class="material-symbols-outlined">home</span> All campaigns</a>
                                 <span class="material-symbols-outlined">arrow_drop_down</span>
                                 <div v-if="dropdown === 'view'" class="ga-dropdown">
                                     <a href="/aw/campaigns">All campaigns</a>
@@ -292,10 +295,12 @@
                             {{ dateRangeLabel }}
                             <span class="material-symbols-outlined">arrow_drop_down</span>
                         </button>
-                        <button class="ga-date-nav" type="button" @click="shiftDateRange(-1)" aria-label="Previous date range">
+                        <button class="ga-date-nav" type="button" @click="shiftDateRange(-1)"
+                            aria-label="Previous date range">
                             <span class="material-symbols-outlined">chevron_left</span>
                         </button>
-                        <button class="ga-date-nav" type="button" @click="shiftDateRange(1)" aria-label="Next date range">
+                        <button class="ga-date-nav" type="button" @click="shiftDateRange(1)"
+                            aria-label="Next date range">
                             <span class="material-symbols-outlined">chevron_right</span>
                         </button>
                         <a href="#" @click.prevent="applyQuickDateOption('last30Days')">Show last 30 days</a>
@@ -315,7 +320,8 @@
                                                 @click="selectDateOption('today')">
                                                 Today
                                             </div>
-                                            <div class="date-option" :class="{ active: selectedDateOption === 'yesterday' }"
+                                            <div class="date-option"
+                                                :class="{ active: selectedDateOption === 'yesterday' }"
                                                 @click="selectDateOption('yesterday')">
                                                 Yesterday
                                             </div>
@@ -329,7 +335,8 @@
                                                 @click="selectDateOption('thisWeekMonSun')">
                                                 This week (Mon - Today)
                                             </div>
-                                            <div class="date-option" :class="{ active: selectedDateOption === 'last7Days' }"
+                                            <div class="date-option"
+                                                :class="{ active: selectedDateOption === 'last7Days' }"
                                                 @click="selectDateOption('last7Days')">
                                                 Last 7 days (up to yesterday)
                                             </div>
@@ -348,23 +355,28 @@
                                                 @click="selectDateOption('lastBusinessWeek')">
                                                 Last business week (Mon - Fri)
                                             </div>
-                                            <div class="date-option" :class="{ active: selectedDateOption === 'last14Days' }"
+                                            <div class="date-option"
+                                                :class="{ active: selectedDateOption === 'last14Days' }"
                                                 @click="selectDateOption('last14Days')">
                                                 Last 14 days (up to yesterday)
                                             </div>
-                                            <div class="date-option" :class="{ active: selectedDateOption === 'thisMonth' }"
+                                            <div class="date-option"
+                                                :class="{ active: selectedDateOption === 'thisMonth' }"
                                                 @click="selectDateOption('thisMonth')">
                                                 This month
                                             </div>
-                                            <div class="date-option" :class="{ active: selectedDateOption === 'last30Days' }"
+                                            <div class="date-option"
+                                                :class="{ active: selectedDateOption === 'last30Days' }"
                                                 @click="selectDateOption('last30Days')">
                                                 Last 30 days
                                             </div>
-                                            <div class="date-option" :class="{ active: selectedDateOption === 'lastMonth' }"
+                                            <div class="date-option"
+                                                :class="{ active: selectedDateOption === 'lastMonth' }"
                                                 @click="selectDateOption('lastMonth')">
                                                 Last month
                                             </div>
-                                            <div class="date-option" :class="{ active: selectedDateOption === 'allTime' }"
+                                            <div class="date-option"
+                                                :class="{ active: selectedDateOption === 'allTime' }"
                                                 @click="selectDateOption('allTime')">
                                                 All time
                                             </div>
@@ -372,7 +384,8 @@
 
                                         <div class="compare-option">
                                             <span class="compare-label">Compare</span>
-                                            <div :class="{ toggled: compareEnabled }" @click="compareEnabled = !compareEnabled">
+                                            <div :class="{ toggled: compareEnabled }"
+                                                @click="compareEnabled = !compareEnabled">
                                                 <div class="toggle-circle"></div>
                                             </div>
                                         </div>
@@ -417,16 +430,18 @@
                                             <div class="calendar-months-scroll">
                                                 <div v-for="monthData in calendarMonths" :key="monthData.date"
                                                     class="calendar-month">
-                                                    <div v-if="!monthData.showTitleInline" class="calendar-month-title">{{
+                                                    <div v-if="!monthData.showTitleInline" class="calendar-month-title">
+                                                        {{
                                                         monthData.monthYear }}</div>
                                                     <div class="calendar-days">
                                                         <div v-for="(week, weekIndex) in monthData.weeks" :key="week"
                                                             class="calendar-week">
                                                             <div v-if="monthData.showTitleInline && weekIndex === 0"
-                                                                class="calendar-month-title-inline">{{ monthData.monthYear }}
+                                                                class="calendar-month-title-inline">{{
+                                                                monthData.monthYear }}
                                                             </div>
-                                                            <div v-for="day in week" :key="day.date" class="calendar-day"
-                                                                :class="{
+                                                            <div v-for="day in week" :key="day.date"
+                                                                class="calendar-day" :class="{
                                                                     'other-month': !day.isCurrentMonth,
                                                                     'selected': isSameDay(day.date, draftStartDate),
                                                                     'in-range': isInRange(day.date),
@@ -445,8 +460,10 @@
                                 </div>
 
                                 <div class="date-picker-actions" v-if="draftStartDate && draftEndDate">
-                                    <button class="action-btn cancel" type="button" @click="cancelDateRange">Cancel</button>
-                                    <button class="action-btn apply" type="button" @click="applyDateRange">Apply</button>
+                                    <button class="action-btn cancel" type="button"
+                                        @click="cancelDateRange">Cancel</button>
+                                    <button class="action-btn apply" type="button"
+                                        @click="applyDateRange">Apply</button>
                                 </div>
                             </div>
                         </div>
@@ -470,7 +487,10 @@
                         :class="{ primary: index === 0 }">
                         <span>{{ metric.label }}</span>
                         <strong>{{ metric.value }}</strong>
-                        <small>{{ metric.delta }}</small>
+                        <div class="ga-metric-delta">
+                            <i class="material-symbols-outlined" style="font-size: 13px;">arrow_upward</i>
+                            <small style="margin-left: 4px;">{{ metric.delta }}</small>
+                        </div>
                     </div>
                     <div class="ga-metric-actions">
                         <button v-for="action in metricActions" :key="action.label" type="button">
@@ -529,6 +549,9 @@
                                 <span class="material-symbols-outlined">{{ tool.icon }}</span>
                                 <small>{{ tool.label }}</small>
                             </button>
+                            <vertical-divider>
+                                <div class="ga-vertical-divider"></div>
+                            </vertical-divider>
                             <button type="button">
                                 <span class="material-symbols-outlined">keyboard_arrow_up</span>
                             </button>
@@ -569,14 +592,16 @@
                                 <tr class="draft-row">
                                     <td></td>
                                     <td><span class="material-symbols-outlined">expand_more</span></td>
-                                    <td><span class="material-symbols-outlined">folder</span> Drafts in progress: 0</td>
+                                    <td class="name-col"><span class="material-symbols-outlined filled">folder</span>
+                                        Drafts in progress: 0</td>
                                     <td colspan="14"></td>
                                 </tr>
                                 <tr v-for="(campaign, index) in campaignRows" :key="campaign.id || index">
-                                    <td><span class="ga-checkbox"></span></td>
+                                    <td class="select-col"><span class="ga-checkbox"></span></td>
                                     <td class="state-col">
                                         <div class="ga-status-cell"
-                                            :class="{ open: dropdown === statusDropdownName(campaign.id || index) }" @click.stop>
+                                            :class="{ open: dropdown === statusDropdownName(campaign.id || index) }"
+                                            @click.stop>
                                             <button class="ga-status-trigger" type="button"
                                                 :aria-label="`Change campaign status for ${campaign.campaign}`"
                                                 :aria-expanded="dropdown === statusDropdownName(campaign.id || index)"
@@ -604,13 +629,23 @@
                                         <span
                                             class="material-symbols-outlined ga-campaign-type">download_for_offline</span>
                                         <a :href="campaignHref(campaign.campaign)">{{ campaign.campaign }}</a>
+                                        <!-- <i class="material-symbols-outlined" style="font-size: 14px;">edit</i>
+                                        <i class="material-symbols-outlined" style="font-size: 14px;">settings</i> -->
                                     </td>
-                                    <td>{{ fixed(campaign.Buget || campaign.budget) }}</td>
-                                    <td><span class="ga-dashed">{{ dash(campaign.Status || campaign.status) }}</span></td>
+                                    <td class="budget-col">
+                                        <span style="display: inline-flex; align-items: center; gap: 4px;">
+                                            ${{ fixed(campaign.Buget || campaign.budget) }}/day
+                                            <i class="material-symbols-outlined" style="font-size: 14px;">image</i>
+                                            <!-- <i class="material-symbols-outlined" style="font-size: 14px;">edit</i> -->
+                                        </span>
+                                    </td>
+                                    <td><span class="ga-dashed">{{ dash(campaign.Status || campaign.status) }}</span>
+                                    </td>
                                     <td>{{ dash(campaign.OptimizationScore || campaign.optimizationScore) }}</td>
                                     <td>{{ dash(campaign.CampaignType || campaign.campaignType) }}</td>
                                     <td>{{ moneyOrDash(campaign.costPerInstall) }}</td>
-                                    <td>{{ moneyOrDash(campaign.costPerInAppActions || campaign.costPerInAppAction) }}</td>
+                                    <td>{{ moneyOrDash(campaign.costPerInAppActions || campaign.costPerInAppAction) }}
+                                    </td>
                                     <td>{{ numberOrZero(campaign.ViewThroughConv || campaign.viewThroughConv) }}</td>
                                     <td>{{ numberOrZero(campaign.installs) }}</td>
                                     <td>{{ numberOrZero(campaign.inAppActions) }}</td>
@@ -670,7 +705,9 @@
                             <tbody>
                                 <tr v-for="(adGroup, index) in adGroupRows" :key="adGroup.id">
                                     <td><span class="ga-checkbox"></span></td>
-                                    <td><span :class="'ga-status-dot ' + statusDotClass(getStatusFromRow(adGroup))"></span></td>
+                                    <td><span
+                                            :class="'ga-status-dot ' + statusDotClass(getStatusFromRow(adGroup))"></span>
+                                    </td>
                                     <td class="name-col"><a :href="adAssetsHref">{{ adGroup.adGroup }}</a></td>
                                     <td><span class="ga-dashed">{{ dash(adGroup.Status || adGroup.status) }}</span></td>
                                     <td>{{ fixed(adGroup.TargetCPA || adGroup.targetCpa) }}</td>

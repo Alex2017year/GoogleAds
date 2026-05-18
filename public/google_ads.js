@@ -253,16 +253,16 @@ createApp({
         metricCards() {
             if (this.pageMode === 'adgroups') {
                 return [
-                    { label: 'Cost', value: this.money(this.selectedCost), delta: `up ${this.money(this.selectedCost)}` },
-                    { label: 'Conversions', value: this.fixed(this.selectedConversions, 2), delta: `up ${this.fixed(this.selectedConversions, 2)}` }
+                    { label: 'Cost', value: this.money(this.selectedCost), delta: `${this.money(this.selectedCost)}` },
+                    { label: 'Conversions', value: this.fixed(this.selectedConversions, 2), delta: `${this.fixed(this.selectedConversions, 2)}` }
                 ];
             }
 
             return [
-                { label: 'Conversions', value: this.fixed(this.totals.conversions, 2), delta: `up ${this.fixed(this.totals.conversions, 2)}` },
-                { label: 'Impr.', value: '0', delta: 'up 0' },
-                { label: 'Cost', value: this.money(this.totals.cost), delta: `up ${this.money(this.totals.cost)}` },
-                { label: 'Conv. value', value: '0.00', delta: 'up 0.00' }
+                { label: 'Conversions', value: this.fixed(this.totals.conversions, 2), delta: `${this.fixed(this.totals.conversions, 2)}` },
+                { label: 'Impr.', value: '0', delta: '0' },
+                { label: 'Cost', value: this.money(this.totals.cost), delta: `${this.money(this.totals.cost)}` },
+                { label: 'Avg. target CPA', value: '-', delta: '-' }
             ];
         },
         metricActions() {
