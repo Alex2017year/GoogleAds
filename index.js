@@ -62,13 +62,16 @@ router.get('/aw/adassets', async (ctx) => {
 router.get('/api/adassets/plan1', async (ctx) => {
   const baseDir = path.join(__dirname, 'adassets', 'plan1');
   const assets = [];
+  const assetIDs = ['359184726315','359102948571','359176430982','359193857264','359128640759','359165209843','359147582936','359210374685','359189264157','359132758409','359154890276','359167482905','359121940683','359198357124','359143276890','359175809432','359106528741'];
+  const sizeName = ['1080 × 1080','1080 × 1080','1080 × 1080','1080 × 1080','1080 × 1080','1080 × 1080','1080 × 1080','1080 × 1080','1080 × 1080','1080 × 1080','1080 × 1080','1080 × 1080','1080 × 1080','1080 × 1080','1080 × 1080',];
 
   // 10 条图片
   for (let i = 1; i <= 10; i++) {
     const imgPath = path.join(baseDir, `img${i}.jpg`);
     assets.push({
-      id: `img-${i}`,
-      asset: `Image ${i}`,
+      id: assetIDs[i],
+      // asset: `Image ${i}`,
+      asset: sizeName[i],
       assetType: 'Image',
       status: 'Eligible',
       performance: 'Pending',

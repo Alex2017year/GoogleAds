@@ -558,10 +558,10 @@
                         </div>
                     </div>
 
-                    <div v-if="pageMode === 'adassets'" class="ga-policy-alert">
+                    <!-- <div v-if="pageMode === 'adassets'" class="ga-policy-alert">
                         Ad violates policy and can't run:
                         <a href="#">Destination not working</a>
-                    </div>
+                    </div> -->
 
                     <div class="ga-table-scroll">
                         <table v-if="pageMode === 'campaigns'" class="ga-data-table campaigns">
@@ -834,15 +834,15 @@
                     <h3>{{ previewModal.asset.source }}</h3>
                     <dl>
                         <dt>Asset ID</dt>
-                        <dd>{{ previewModal.asset.assetId }}</dd>
+                        <dd>{{ previewModal.asset.id }}</dd>
                         <dt>Type</dt>
                         <dd>{{ previewModal.asset.assetType }}</dd>
                         <dt>Dimensions</dt>
-                        <dd>{{ previewModal.asset.dimensions }}</dd>
+                        <dd>{{ previewModal.asset.asset }}</dd>
                         <dt>Orientation</dt>
-                        <dd>{{ previewModal.asset.orientation }}</dd>
+                        <dd>Square</dd>
                         <dt>Aspect ratio</dt>
-                        <dd>{{ previewModal.asset.aspectRatio }}</dd>
+                        <dd>1:1</dd>
                         <dt>Source</dt>
                         <dd>Advertiser</dd>
                     </dl>

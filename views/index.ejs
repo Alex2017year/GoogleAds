@@ -643,7 +643,7 @@
             </div>
 
             <!-- 分页控件 -->
-            <div class="pagination" v-if="showPagination">
+            <div class="pagination">
                 <div class="page-size" style="position: relative;">
                     <span>Show rows</span>
                     <div class="select-div" @click="togglePageSizeDropdown">
@@ -663,10 +663,14 @@
                     <span>{{ startRow }} - {{ endRow }} of {{ filteredCampaigns.length }}</span>
                 </div>
                 <div class="page-nav">
-                    <span class="material-symbols-outlined" @click="currentPage = 1">first_page</span>
-                    <span class="material-symbols-outlined" @click="currentPage--">chevron_left</span>
-                    <span class="material-symbols-outlined" @click="currentPage++">chevron_right</span>
-                    <span class="material-symbols-outlined" @click="currentPage = totalPages">last_page</span>
+                    <span class="material-symbols-outlined" :class="{ disabled: !canGoPreviousPage }"
+                        @click="canGoPreviousPage && (currentPage = 1)">first_page</span>
+                    <span class="material-symbols-outlined" :class="{ disabled: !canGoPreviousPage }"
+                        @click="canGoPreviousPage && currentPage--">chevron_left</span>
+                    <span class="material-symbols-outlined" :class="{ disabled: !canGoNextPage }"
+                        @click="canGoNextPage && currentPage++">chevron_right</span>
+                    <span class="material-symbols-outlined" :class="{ disabled: !canGoNextPage }"
+                        @click="canGoNextPage && (currentPage = totalPages)">last_page</span>
                 </div>
             </div>
         </div>

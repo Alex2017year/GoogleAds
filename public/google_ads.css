@@ -829,7 +829,7 @@
     position: sticky;
     top: 0;
     background: #eef0f1;
-    z-index: 10;
+    z-index: 40;
 }
 
 .ga-page-head-heading {
@@ -1760,8 +1760,12 @@ button.ga-floating-add .material-symbols-outlined {
 }
 
 .ga-preview-details dl {
-    align-items: stretch;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    row-gap: 12px;
+    column-gap: 16px;
+    /* align-items: stretch; */
+    /* flex-direction: row; */
     border: 1px solid #dadce0;
     border-radius: 8px;
     padding: 14px 18px;
@@ -1778,10 +1782,12 @@ button.ga-floating-add .material-symbols-outlined {
     color: #5f6368;
     float: left;
     width: 110px;
+    margin: 0;
 }
 
 .ga-preview-details dd {
     margin-left: 120px;
+    margin: 0;
 }
 
 @media (max-width: 1180px) {

@@ -3,6 +3,13 @@ const { createApp } = Vue;
 const params = new URLSearchParams(window.location.search);
 const CAMPAIGN_STATUS_STORAGE_KEY = 'googleAdsCampaignStatuses';
 const ASSET_RANDOM_CACHE_KEY = 'googleAdsAssetRandom_';
+const DATE_FILTER_STORAGE_KEY = 'googleAdsDateFilter';
+const DEFAULT_DATE_FILTER = {
+    selectedDateOption: 'custom',
+    appliedDateOption: 'custom',
+    startDate: '2026-04-11',
+    endDate: '2026-05-08'
+};
 
 function readCampaignStatusOverrides() {
     try {
@@ -27,8 +34,35 @@ function safeNumber(value) {
     return Number.isFinite(number) ? number : 0;
 }
 
+function parseStoredDate(value) {
+    if (!value) return null;
+    const match = String(value).match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+    if (!match) return null;
+    return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+}
+
+function readDateFilterState() {
+    let saved = {};
+    try {
+        saved = JSON.parse(sessionStorage.getItem(DATE_FILTER_STORAGE_KEY) || '{}');
+    } catch (error) {
+        saved = {};
+    }
+
+    const startDate = parseStoredDate(saved.startDate) || parseStoredDate(DEFAULT_DATE_FILTER.startDate);
+    const endDate = parseStoredDate(saved.endDate) || parseStoredDate(DEFAULT_DATE_FILTER.endDate);
+
+    return {
+        selectedDateOption: saved.selectedDateOption || DEFAULT_DATE_FILTER.selectedDateOption,
+        appliedDateOption: saved.appliedDateOption || DEFAULT_DATE_FILTER.appliedDateOption,
+        startDate,
+        endDate
+    };
+}
+
 createApp({
     data() {
+        const initialDateFilter = readDateFilterState();
         return {
             pageMode: getInitialPageMode(),
             dropdown: '',
@@ -37,14 +71,16 @@ createApp({
             selectedCampaignId: params.get('campaignId') || '',
             selectedAdGroupId: params.get('adGroupId') || 'adgroup-1',
             showDatePicker: false,
-            selectedDateOption: 'custom',
-            appliedDateOption: 'custom',
+            selectedDateOption: initialDateFilter.selectedDateOption,
+            appliedDateOption: initialDateFilter.appliedDateOption,
             compareEnabled: false,
-            startDate: new Date(2026, 3, 11),
-            endDate: new Date(2026, 4, 8),
+            startDate: initialDateFilter.startDate,
+            endDate: initialDateFilter.endDate,
             draftStartDate: null,
             draftEndDate: null,
-            calendarMonth: new Date(2026, 3, 1),
+            calendarMonth: initialDateFilter.startDate
+                ? new Date(initialDateFilter.startDate.getFullYear(), initialDateFilter.startDate.getMonth(), 1)
+                : new Date(2026, 3, 1),
             selectingStartDate: true,
             previewModal: null,
             isContextBarHidden: false,
@@ -771,6 +807,7 @@ createApp({
             this.startDate = this.cloneDate(this.draftStartDate);
             this.endDate = this.cloneDate(this.draftEndDate);
             this.appliedDateOption = this.selectedDateOption;
+            this.saveDateFilterState();
             this.refreshCampaignData();
             this.showDatePicker = false;
         },
@@ -793,7 +830,19 @@ createApp({
             this.endDate = end;
             this.appliedDateOption = 'custom';
             this.selectedDateOption = 'custom';
+            this.saveDateFilterState();
             this.refreshCampaignData();
+        },
+        saveDateFilterState() {
+            try {
+                sessionStorage.setItem(DATE_FILTER_STORAGE_KEY, JSON.stringify({
+                    selectedDateOption: this.selectedDateOption,
+                    appliedDateOption: this.appliedDateOption,
+                    startDate: this.formatIsoDate(this.startDate),
+                    endDate: this.formatIsoDate(this.endDate)
+                }));
+            } catch (error) {
+            }
         },
         toggleDropdown(name) {
             if (name === 'view' && this.pageMode !== 'campaigns') {
