@@ -1679,6 +1679,12 @@ button.ga-floating-add .material-symbols-outlined {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.36);
 }
 
+.ga-preview-stage h2 {
+    margin: 0 0 22px 50px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
 .ga-preview-stage {
     position: relative;
     background: rgba(32, 33, 36, 0.88);
@@ -1693,7 +1699,7 @@ button.ga-floating-add .material-symbols-outlined {
 .ga-preview-close {
     position: absolute;
     left: 18px;
-    top: 16px;
+    top: 26px;
     border: 0;
     background: transparent;
     color: #fff;
@@ -1755,6 +1761,10 @@ button.ga-floating-add .material-symbols-outlined {
     margin-left: 120px;
     margin: 0;
 }
+
+/* .ga-previewModal-asset-aboutinfo-aboutinfo {
+
+} */
 
 @media (max-width: 1180px) {
     .ga-search,

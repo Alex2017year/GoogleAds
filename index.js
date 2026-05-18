@@ -73,6 +73,7 @@ router.get('/api/adassets/plan1', async (ctx) => {
       // asset: `Image ${i}`,
       asset: sizeName[i],
       assetType: 'Image',
+      source: 'Free stock image - 2026-05-16 16:05:12_1.870',
       status: 'Eligible',
       performance: 'Pending',
       image: `/adassets/plan1/img${i}.jpg`,
