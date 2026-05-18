@@ -36,6 +36,16 @@ createApp({
             isNavCollapsed: localStorage.getItem('googleAdsNavCollapsed') === 'true',
             selectedCampaignId: params.get('campaignId') || '',
             selectedAdGroupId: params.get('adGroupId') || 'adgroup-1',
+            showDatePicker: false,
+            selectedDateOption: 'custom',
+            appliedDateOption: 'custom',
+            compareEnabled: false,
+            startDate: new Date(2026, 3, 11),
+            endDate: new Date(2026, 4, 8),
+            draftStartDate: null,
+            draftEndDate: null,
+            calendarMonth: new Date(2026, 3, 1),
+            selectingStartDate: true,
             previewModal: null,
             isContextBarHidden: false,
             ads_isCampaignOpen: true,
@@ -94,6 +104,22 @@ createApp({
         };
     },
     computed: {
+        filteredRawData() {
+            if (!this.startDate || !this.endDate) return this.rawData;
+
+            const start = this.parseLocalDate(this.startDate);
+            const end = this.parseLocalDate(this.endDate);
+            if (!start || !end) return this.rawData;
+
+            start.setHours(0, 0, 0, 0);
+            end.setHours(23, 59, 59, 999);
+
+            return this.rawData.filter(row => {
+                const rowDate = this.parseLocalDate(row.date);
+                if (!rowDate) return false;
+                return rowDate >= start && rowDate <= end;
+            });
+        },
         campaignRows() {
             return this.data.campaigns
                 .filter(campaign => !campaign.isTotal && !campaign.isRemoved)
@@ -101,9 +127,9 @@ createApp({
                 .sort((left, right) => left.campaign.localeCompare(right.campaign, 'en', { numeric: true }));
         },
         adGroupRows() {
-            const campaignName = params.get('campaignId') || '';
+            const campaignName = this.selectedCampaignId || params.get('campaignId') || '';
             if (!campaignName || !this.rawData.length) return [];
-            const filtered = this.rawData.filter(row => row.campaign === campaignName);
+            const filtered = this.filteredRawData.filter(row => row.campaign === campaignName);
             return this.mergeAdGroupsBy(filtered);
         },
         adGroupTotal() {
@@ -150,14 +176,14 @@ createApp({
             return 'Campaigns';
         },
         totals() {
-            return this.campaignRows.reduce((acc, campaign) => {
+            const result = this.campaignRows.reduce((acc, campaign) => {
                 acc.cost += safeNumber(campaign.cost);
                 acc.installs += safeNumber(campaign.installs);
                 acc.inAppActions += safeNumber(campaign.inAppActions);
                 acc.impressions += safeNumber(campaign.impressions);
                 acc.clicks += safeNumber(campaign.clicks);
-                acc.conversions += safeNumber(campaign.conversions);
-                acc.viewThroughConv += safeNumber(campaign.viewThroughConv);
+                acc.conversions += safeNumber(campaign.Conversions || campaign.conversions);
+                acc.viewThroughConv += safeNumber(campaign.ViewThroughConv || campaign.viewThroughConv);
                 return acc;
             }, {
                 cost: 0,
@@ -169,12 +195,14 @@ createApp({
                 viewThroughConv: 0,
                 ctr: 0
             });
+            result.ctr = result.impressions ? (result.clicks / result.impressions) * 100 : 0;
+            return result;
         },
         selectedCost() {
             return this.selectedCampaign ? safeNumber(this.selectedCampaign.cost) : 0;
         },
         selectedConversions() {
-            return this.selectedCampaign ? safeNumber(this.selectedCampaign.conversions) : 0;
+            return this.selectedCampaign ? safeNumber(this.selectedCampaign.Conversions || this.selectedCampaign.conversions) : 0;
         },
         selectedCostPerInstall() {
             return this.selectedCampaign ? safeNumber(this.selectedCampaign.costPerInstall) : 0;
@@ -363,6 +391,59 @@ createApp({
                 return `1 - ${this.adGroupRows.length} of ${this.adGroupRows.length}`;
             }
             return `1 - ${this.campaignRows.length} of ${this.campaignRows.length}`;
+        },
+        calendarMonths() {
+            const months = [];
+            const baseDate = this.calendarMonth;
+            for (let i = -6; i < 6; i++) {
+                const targetDate = new Date(baseDate.getFullYear(), baseDate.getMonth() + i, 1);
+                const calendarData = this.getCalendarWeeks(targetDate);
+                months.push({
+                    date: targetDate,
+                    monthYear: targetDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }).toUpperCase(),
+                    weeks: calendarData.weeks,
+                    firstWeekCurrentMonthDays: calendarData.firstWeekCurrentMonthDays,
+                    showTitleInline: calendarData.firstWeekCurrentMonthDays < 4
+                });
+            }
+            return months;
+        },
+        calendarMonthYear() {
+            return this.calendarMonth.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }).toUpperCase();
+        },
+        formattedStartDate() {
+            if (!this.startDate) return '';
+            return this.formatDate(this.startDate);
+        },
+        formattedEndDate() {
+            if (!this.endDate) return '';
+            return this.formatDate(this.endDate);
+        },
+        formattedDraftStartDate() {
+            if (!this.draftStartDate) return '';
+            return this.formatDate(this.draftStartDate);
+        },
+        formattedDraftEndDate() {
+            if (!this.draftEndDate) return '';
+            return this.formatDate(this.draftEndDate);
+        },
+        dateRangeLabel() {
+            if (!this.formattedStartDate || !this.formattedEndDate) return '';
+            return this.formattedStartDate === this.formattedEndDate
+                ? this.formattedStartDate
+                : `${this.formattedStartDate} - ${this.formattedEndDate}`;
+        },
+        dropdownStyle() {
+            if (!this.showDatePicker || !this.$refs.dateSelectRef) return {};
+            const rect = this.$refs.dateSelectRef.getBoundingClientRect();
+            const pickerWidth = 508;
+            const left = Math.max(16, Math.min(rect.left, window.innerWidth - pickerWidth - 16));
+            return {
+                position: 'fixed',
+                top: `${rect.bottom + 8}px`,
+                left: `${left}px`,
+                zIndex: '10000'
+            };
         }
     },
     methods: {
@@ -374,12 +455,7 @@ createApp({
                 const response = await fetch('/assets/tableData.json', { cache: 'no-store' });
                 const rawData = await response.json();
                 this.rawData = rawData;
-                const campaigns = this.mergeCampaignsBy(rawData);
-                this.data = {
-                    ...this.data,
-                    campaigns
-                };
-                this.applyCampaignStatusOverrides();
+                this.refreshCampaignData();
                 if (!this.selectedCampaignId && this.pageMode !== 'campaigns' && this.campaignRows.length) {
                     this.selectedCampaignId = this.campaignRows[0].campaign;
                 }
@@ -397,6 +473,327 @@ createApp({
             } catch (error) {
                 console.error('Unable to load ad assets', error);
             }
+        },
+        refreshCampaignData() {
+            this.data = {
+                ...this.data,
+                dateRange: {
+                    start: this.formatIsoDate(this.startDate),
+                    end: this.formatIsoDate(this.endDate),
+                    label: this.dateRangeLabel
+                },
+                campaigns: this.mergeCampaignsBy(this.filteredRawData)
+            };
+            this.applyCampaignStatusOverrides();
+        },
+        parseLocalDate(value) {
+            if (!value) return null;
+
+            if (value instanceof Date) {
+                if (Number.isNaN(value.getTime())) return null;
+                return new Date(value.getFullYear(), value.getMonth(), value.getDate());
+            }
+
+            const text = String(value).trim();
+            const dateOnlyMatch = text.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+            if (dateOnlyMatch) {
+                return new Date(
+                    Number(dateOnlyMatch[1]),
+                    Number(dateOnlyMatch[2]) - 1,
+                    Number(dateOnlyMatch[3])
+                );
+            }
+
+            const parsed = new Date(text);
+            if (Number.isNaN(parsed.getTime())) return null;
+            return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+        },
+        formatDate(date) {
+            const d = this.parseLocalDate(date);
+            if (!d) return '';
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${monthNames[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+        },
+        formatIsoDate(date) {
+            const d = this.parseLocalDate(date);
+            if (!d) return '';
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${d.getFullYear()}-${month}-${day}`;
+        },
+        getDateOptionLabel(option) {
+            const labels = {
+                today: 'Today',
+                yesterday: 'Yesterday',
+                thisWeekSunSat: 'This week (Sun - Today)',
+                thisWeekMonSun: 'This week (Mon - Today)',
+                last7Days: 'Last 7 days (up to yesterday)',
+                lastWeekSunSat: 'Last week (Sun - Sat)',
+                lastWeekMonSun: 'Last week (Mon - Sun)',
+                lastBusinessWeek: 'Last business week (Mon - Fri)',
+                last14Days: 'Last 14 days (up to yesterday)',
+                thisMonth: 'This month',
+                last30Days: 'Last 30 days',
+                lastMonth: 'Last month',
+                allTime: 'All time',
+                custom: 'Custom'
+            };
+            return labels[option] || 'Custom';
+        },
+        getCalendarWeeks(targetDate) {
+            const year = targetDate.getFullYear();
+            const month = targetDate.getMonth();
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const startDay = firstDay.getDay();
+            const weeks = [];
+            let currentWeek = [];
+            let firstWeekCurrentMonthDays = 0;
+
+            for (let i = 0; i < startDay; i++) {
+                currentWeek.push({ date: new Date(year, month, -startDay + i + 1), isCurrentMonth: false });
+            }
+
+            for (let i = 1; i <= lastDay.getDate(); i++) {
+                currentWeek.push({ date: new Date(year, month, i), isCurrentMonth: true });
+                if (weeks.length === 0) firstWeekCurrentMonthDays++;
+                if (currentWeek.length === 7) {
+                    weeks.push(currentWeek);
+                    currentWeek = [];
+                }
+            }
+
+            if (currentWeek.length > 0) {
+                for (let i = 1; currentWeek.length < 7; i++) {
+                    currentWeek.push({ date: new Date(year, month + 1, i), isCurrentMonth: false });
+                }
+                weeks.push(currentWeek);
+            }
+
+            return { weeks, firstWeekCurrentMonthDays };
+        },
+        isSameDay(date1, date2) {
+            const d1 = this.parseLocalDate(date1);
+            const d2 = this.parseLocalDate(date2);
+            if (!d1 || !d2) return false;
+            return d1.getFullYear() === d2.getFullYear() &&
+                d1.getMonth() === d2.getMonth() &&
+                d1.getDate() === d2.getDate();
+        },
+        isInRange(date) {
+            if (!this.draftStartDate || !this.draftEndDate) return false;
+            const d = this.parseLocalDate(date);
+            const start = this.parseLocalDate(this.draftStartDate);
+            const end = this.parseLocalDate(this.draftEndDate);
+            if (!d || !start || !end) return false;
+            return d >= start && d <= end;
+        },
+        toggleDatePicker(event) {
+            if (event) event.stopPropagation();
+            if (this.showDatePicker) {
+                this.cancelDateRange();
+                return;
+            }
+
+            this.dropdown = '';
+            this.showDatePicker = true;
+            this.resetDraftDateRange();
+            this.calendarMonth = this.draftStartDate ? new Date(this.draftStartDate) : new Date();
+            this.$nextTick(() => this.scrollToSelectedDate());
+        },
+        scrollToSelectedDate() {
+            if (!this.draftStartDate) return;
+            const selectedDayElement = document.querySelector('.date-picker-dropdown .calendar-day.selected');
+            if (selectedDayElement) {
+                selectedDayElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        },
+        handleClickOutside(event) {
+            if (!this.showDatePicker) return;
+            const datePickerEl = document.querySelector('.date-picker-dropdown');
+            const dateSelectEl = this.$refs.dateSelectRef;
+            if (datePickerEl && !datePickerEl.contains(event.target) &&
+                dateSelectEl && !dateSelectEl.contains(event.target)) {
+                this.cancelDateRange();
+            }
+        },
+        selectDateOption(option) {
+            this.selectedDateOption = option;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            switch (option) {
+                case 'today':
+                    this.draftStartDate = new Date(today);
+                    this.draftEndDate = new Date(today);
+                    break;
+                case 'yesterday': {
+                    const yesterday = new Date(today);
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    this.draftStartDate = new Date(yesterday);
+                    this.draftEndDate = new Date(yesterday);
+                    break;
+                }
+                case 'thisWeekSunSat': {
+                    const start = new Date(today);
+                    start.setDate(start.getDate() - start.getDay());
+                    this.draftStartDate = start;
+                    this.draftEndDate = new Date(today);
+                    break;
+                }
+                case 'thisWeekMonSun': {
+                    const start = new Date(today);
+                    const day = start.getDay();
+                    start.setDate(start.getDate() - (day === 0 ? 6 : day - 1));
+                    this.draftStartDate = start;
+                    this.draftEndDate = new Date(today);
+                    break;
+                }
+                case 'last7Days': {
+                    const start = new Date(today);
+                    start.setDate(start.getDate() - 7);
+                    const end = new Date(today);
+                    end.setDate(end.getDate() - 1);
+                    this.draftStartDate = start;
+                    this.draftEndDate = end;
+                    break;
+                }
+                case 'lastWeekSunSat': {
+                    const start = new Date(today);
+                    const diff = start.getDay() === 0 ? 7 : start.getDay();
+                    start.setDate(start.getDate() - diff);
+                    const end = new Date(start);
+                    end.setDate(end.getDate() + 6);
+                    this.draftStartDate = start;
+                    this.draftEndDate = end;
+                    break;
+                }
+                case 'lastWeekMonSun': {
+                    const start = new Date(today);
+                    const day = start.getDay();
+                    start.setDate(start.getDate() - (day === 1 ? 7 : (day === 0 ? 6 : day - 1)));
+                    const end = new Date(start);
+                    end.setDate(end.getDate() + 6);
+                    this.draftStartDate = start;
+                    this.draftEndDate = end;
+                    break;
+                }
+                case 'lastBusinessWeek': {
+                    const start = new Date(today);
+                    const day = start.getDay();
+                    start.setDate(start.getDate() - (day === 1 ? 7 : (day === 0 ? 6 : day - 1)));
+                    const end = new Date(start);
+                    end.setDate(end.getDate() + 4);
+                    this.draftStartDate = start;
+                    this.draftEndDate = end;
+                    break;
+                }
+                case 'last14Days': {
+                    const start = new Date(today);
+                    start.setDate(start.getDate() - 14);
+                    const end = new Date(today);
+                    end.setDate(end.getDate() - 1);
+                    this.draftStartDate = start;
+                    this.draftEndDate = end;
+                    break;
+                }
+                case 'thisMonth':
+                    this.draftStartDate = new Date(today.getFullYear(), today.getMonth(), 1);
+                    this.draftEndDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                    break;
+                case 'last30Days': {
+                    const start = new Date(today);
+                    start.setDate(start.getDate() - 29);
+                    this.draftStartDate = start;
+                    this.draftEndDate = new Date(today);
+                    break;
+                }
+                case 'lastMonth':
+                    this.draftStartDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+                    this.draftEndDate = new Date(today.getFullYear(), today.getMonth(), 0);
+                    break;
+                case 'allTime':
+                    this.draftStartDate = new Date(2000, 0, 1);
+                    this.draftEndDate = new Date(today);
+                    break;
+                case 'custom':
+                    if (!this.draftStartDate || !this.draftEndDate) {
+                        this.resetDraftDateRange();
+                    }
+                    break;
+            }
+
+            if (this.draftStartDate) {
+                this.calendarMonth = new Date(this.draftStartDate);
+            }
+            this.$nextTick(() => this.scrollToSelectedDate());
+        },
+        selectCalendarDate(date) {
+            if (this.selectingStartDate) {
+                this.draftStartDate = new Date(date);
+                this.draftEndDate = null;
+                this.selectingStartDate = false;
+            } else {
+                if (date < this.draftStartDate) {
+                    this.draftEndDate = new Date(this.draftStartDate);
+                    this.draftStartDate = new Date(date);
+                } else {
+                    this.draftEndDate = new Date(date);
+                }
+                this.selectingStartDate = true;
+            }
+            this.selectedDateOption = 'custom';
+            this.calendarMonth = new Date(date);
+        },
+        selectStartDate() {
+            this.selectingStartDate = true;
+            this.selectedDateOption = 'custom';
+        },
+        selectEndDate() {
+            this.selectingStartDate = false;
+            this.selectedDateOption = 'custom';
+        },
+        navigateMonth(direction) {
+            this.calendarMonth = new Date(this.calendarMonth.getFullYear(), this.calendarMonth.getMonth() + direction, 1);
+        },
+        cloneDate(date) {
+            const parsed = this.parseLocalDate(date);
+            return parsed ? new Date(parsed) : null;
+        },
+        resetDraftDateRange() {
+            this.selectedDateOption = this.appliedDateOption;
+            this.draftStartDate = this.cloneDate(this.startDate);
+            this.draftEndDate = this.cloneDate(this.endDate);
+            this.selectingStartDate = true;
+        },
+        applyDateRange() {
+            if (!this.draftStartDate || !this.draftEndDate) return;
+            this.startDate = this.cloneDate(this.draftStartDate);
+            this.endDate = this.cloneDate(this.draftEndDate);
+            this.appliedDateOption = this.selectedDateOption;
+            this.refreshCampaignData();
+            this.showDatePicker = false;
+        },
+        cancelDateRange() {
+            this.resetDraftDateRange();
+            this.showDatePicker = false;
+        },
+        applyQuickDateOption(option) {
+            this.selectDateOption(option);
+            this.applyDateRange();
+        },
+        shiftDateRange(direction) {
+            const start = this.cloneDate(this.startDate);
+            const end = this.cloneDate(this.endDate);
+            if (!start || !end) return;
+            const daySpan = Math.max(1, Math.round((end - start) / 86400000) + 1);
+            start.setDate(start.getDate() + direction * daySpan);
+            end.setDate(end.getDate() + direction * daySpan);
+            this.startDate = start;
+            this.endDate = end;
+            this.appliedDateOption = 'custom';
+            this.selectedDateOption = 'custom';
+            this.refreshCampaignData();
         },
         toggleDropdown(name) {
             if (name === 'view' && this.pageMode !== 'campaigns') {
@@ -434,6 +831,7 @@ createApp({
         applyCampaignStatus(campaign, status) {
             campaign.campaignStatus = status;
             campaign.status = this.campaignStatusText(status);
+            campaign.Status = this.campaignStatusText(status);
             campaign.isRemoved = status === 'Removed';
         },
         applyCampaignStatusOverrides() {
@@ -484,6 +882,8 @@ createApp({
                         costPerInAppActions: 0,
                         costPerInAppAction: 0,
                         ViewThroughConv: 0,
+                        impressions: 0,
+                        clicks: 0,
                         installs: 0,
                         inAppActions: 0,
                         ParticipatedInAppActions: 0,
@@ -498,10 +898,13 @@ createApp({
                 }
 
                 const merged = campaignMap.get(key);
+                merged.impressions += safeNumber(row.impressions);
+                merged.clicks += safeNumber(row.clicks);
                 merged.installs += safeNumber(row.installs);
                 merged.inAppActions += safeNumber(row.inAppActions);
                 merged.ParticipatedInAppActions += safeNumber(row.ParticipatedInAppActions || row.ParticlpatedInAppActions);
                 merged.cost += safeNumber(row.cost);
+                merged.ViewThroughConv += safeNumber(row.ViewThroughConv || row.viewThroughConv);
                 merged.Conversions += safeNumber(row.Conversions);
 
                 // 汇总后计算衍生字段
@@ -658,6 +1061,7 @@ createApp({
     async mounted() {
         await this.loadData();
         document.addEventListener('click', this.closeDropdown);
+        document.addEventListener('click', this.handleClickOutside);
 
         // Add scroll listener for hiding context bar
         const mainElement = document.querySelector('.ga-main');
@@ -667,6 +1071,7 @@ createApp({
     },
     beforeUnmount() {
         document.removeEventListener('click', this.closeDropdown);
+        document.removeEventListener('click', this.handleClickOutside);
 
         // Remove scroll listener
         const mainElement = document.querySelector('.ga-main');

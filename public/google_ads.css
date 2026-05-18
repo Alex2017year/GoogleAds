@@ -898,6 +898,23 @@
     gap: 20px;
 }
 
+.ga-date-nav {
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: #5f6368;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.ga-date-nav:hover {
+    background: #e8eaed;
+}
+
 .ga-info-banner {
     margin: 20px 28px;
     min-height: 58px;
