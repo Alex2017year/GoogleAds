@@ -527,13 +527,11 @@ createApp({
             if (!this.showDatePicker || !this.$refs.dateSelectRef) return {};
             this.datePickerPositionTick;
             const rect = this.$refs.dateSelectRef.getBoundingClientRect();
-            const pageHead = this.$refs.dateSelectRef.closest('.ga-page-head');
-            const pageHeadRect = pageHead ? pageHead.getBoundingClientRect() : { top: 0, left: 0, width: window.innerWidth };
             const pickerWidth = 508;
-            const left = Math.max(16, Math.min(rect.left - pageHeadRect.left, pageHeadRect.width - pickerWidth - 16));
+            const left = Math.max(16, Math.min(rect.left, window.innerWidth - pickerWidth - 16));
             return {
-                position: 'absolute',
-                top: `${rect.bottom - pageHeadRect.top + 8}px`,
+                position: 'fixed',
+                top: `${rect.bottom + 8}px`,
                 left: `${left}px`,
                 zIndex: '10000'
             };
@@ -592,6 +590,19 @@ createApp({
         },
         toggleAssetCostSort() {
             this.toggleAssetSort('cost');
+        },
+        scheduleDatePickerReposition() {
+            this.datePickerPositionTick += 1;
+            if (window.requestAnimationFrame) {
+                window.requestAnimationFrame(() => {
+                    this.datePickerPositionTick += 1;
+                });
+            }
+            [120, 260].forEach(delay => {
+                window.setTimeout(() => {
+                    this.datePickerPositionTick += 1;
+                }, delay);
+            });
         },
         refreshCampaignData() {
             this.data = {
@@ -1163,7 +1174,7 @@ createApp({
             }
             if (this.showDatePicker) {
                 this.$nextTick(() => {
-                    this.datePickerPositionTick += 1;
+                    this.scheduleDatePickerReposition();
                 });
             }
         },
