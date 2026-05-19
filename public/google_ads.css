@@ -952,8 +952,8 @@
 
 .ga-tabs {
     gap: 24px;
-    padding: 0 28px 16px;
-    margin-bottom: 22px;
+    padding: 0 28px 0px;
+    margin-bottom: 0px;
 }
 
 .ga-tabs button {
@@ -961,8 +961,8 @@
     background: transparent;
     color: #5f6368;
     font: inherit;
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 15px;
+    font-weight: 500;
     padding: 0 0 15px;
     position: relative;
     cursor: pointer;
@@ -1209,12 +1209,34 @@
 }
 
 .ga-ring {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    border: 3px solid #1a73e8;
-    box-shadow: inset 0 0 0 8px #e8f0fe;
-    background: conic-gradient(#1a73e8 18%, transparent 0);
+    position: relative;
+    --progress: 0.82;
+    background: #ffffff;
+    border: 1px solid #1a73e8;
+}
+
+.ga-ring::before {
+    content: '';
+    position: absolute;
+    inset: 3.9px;
+    border-radius: 50%;
+    background: #e8f0fe;
+    border: 1px solid #1a73e8;
+    pointer-events: none;
+}
+
+.ga-ring::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: conic-gradient(#1a73e8 calc(var(--progress) * 1turn), transparent 0);
+    -webkit-mask-image: radial-gradient(circle closest-side, transparent 80%, black 80%, black 100%, transparent 100%);
+    mask-image: radial-gradient(circle closest-side, transparent 80%, black 80%, black 100%, transparent 100%);
+    pointer-events: none;
 }
 
 .ga-strength-score strong,
@@ -1223,13 +1245,15 @@
 }
 
 .ga-strength-counts {
-    gap: 20px;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 8px;
 }
 
 .ga-strength-counts span {
     display: inline-flex;
     align-items: center;
+    font-size: 12px;
     gap: 8px;
     white-space: nowrap;
 }
@@ -1245,8 +1269,8 @@
 .ga-asset-chart-area {
     position: relative;
     margin: 0 28px;
-    height: 220px;
-    background: #fff;
+    height: 210px;
+    background: #eef0f1;
     border-bottom: 1px solid #dadce0;
     overflow: hidden;
 }
@@ -1255,6 +1279,7 @@
     position: absolute;
     top: 12px;
     right: 18px;
+    bottom: 5px;
     display: flex;
     align-items: flex-start;
     gap: 10px;
@@ -1279,7 +1304,7 @@
     gap: 8px;
     border: 1px solid #c4c7c5;
     border-radius: 4px;
-    background: #fff;
+    background: #eef0f1;
 }
 
 .ga-chart-select .material-symbols-outlined {
@@ -1320,6 +1345,7 @@
 .ga-chart-tool small {
     font-size: 11px;
     line-height: 14px;
+    font-weight: 600;
     white-space: nowrap;
 }
 
@@ -1363,8 +1389,8 @@
 .ga-chart-area {
     position: relative;
     margin: 0 28px;
-    height: 220px;
-    background: #fff;
+    height: 205px;
+    background: #eef0f1;
     border-bottom: 1px solid #dadce0;
 }
 
@@ -1417,12 +1443,20 @@
     stroke-width: 2;
 }
 
+.ga-chart-label {
+    font-size: 12px;
+    fill: #5f6368;
+    text-anchor: middle;
+    font-weight: 500;
+}
+
 .ga-chart-start,
 .ga-chart-end {
+    bottom: 10px;
     position: absolute;
     bottom: 16px;
     color: #777;
-    font-size: 14px;
+    font-size: 13px;
 }
 
 .ga-chart-start {
@@ -1466,10 +1500,10 @@
 }
 
 button.ga-floating-add {
-    position: sticky;
+    position: absolute;
     z-index: 20;
-    left: 22px;
-    top: 100px;
+    left: 5px;
+    top: -20px;
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -1478,7 +1512,7 @@ button.ga-floating-add {
     box-shadow: 0 3px 8px rgba(60, 64, 67, 0.28);
     display: grid;
     place-items: center;
-    margin-bottom: 8px;
+    margin: 0;
 }
 
 button.ga-floating-add .material-symbols-outlined {
@@ -1488,7 +1522,7 @@ button.ga-floating-add .material-symbols-outlined {
 .ga-table-toolbar {
     position: sticky;
     top: 88px;
-    height: 64px;
+    height: 56px;
     border-bottom: 1px solid #dadce0;
     justify-content: space-between;
     padding: 10px 0 10px 36px;
@@ -1503,13 +1537,13 @@ button.ga-floating-add .material-symbols-outlined {
 }
 
 .ga-table-panel--adassets button.ga-floating-add {
-    top: 138px;
+    top: -20px;
 }
 
 .ga-toolbar-left {
-    gap: 20px;
+    gap: 10px;
     color: #5f6368;
-    font-size: 18px;
+    font-size: 14px;
     font-family: "Google Sans", Roboto, Arial, sans-serif;
 }
 
@@ -2092,6 +2126,12 @@ button.ga-floating-add .material-symbols-outlined {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.36);
 }
 
+.ga-preview-stage h2 {
+    margin: 0 0 22px 50px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
 .ga-preview-stage {
     position: relative;
     background: rgba(32, 33, 36, 0.88);
@@ -2106,7 +2146,7 @@ button.ga-floating-add .material-symbols-outlined {
 .ga-preview-close {
     position: absolute;
     left: 18px;
-    top: 16px;
+    top: 26px;
     border: 0;
     background: transparent;
     color: #fff;
@@ -2143,11 +2183,22 @@ button.ga-floating-add .material-symbols-outlined {
     grid-template-columns: 120px 1fr;
     row-gap: 12px;
     column-gap: 16px;
+    position: relative;
     /* align-items: stretch; */
     /* flex-direction: row; */
     border: 1px solid #dadce0;
     border-radius: 8px;
     padding: 14px 18px;
+}
+
+.ga-preview-details dl::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(14px + 28px);
+    border-top: 1px solid #e8eaed;
+    pointer-events: none;
 }
 
 .ga-preview-details dt,
@@ -2164,9 +2215,42 @@ button.ga-floating-add .material-symbols-outlined {
     margin: 0;
 }
 
+.ga-preview-details-title {
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.ga-preview-details-toggle {
+    display: flex;
+    justify-self: end;
+    align-items: center;
+}
+
+.ga-preview-details-toggle-button {
+    border: none;
+    background: transparent;
+    padding: 0;
+    color: #5f6368;
+    cursor: pointer;
+}
+
 .ga-preview-details dd {
     margin-left: 120px;
     margin: 0;
+}
+
+.ga-previewModal-asset-aboutinfo-aboutinfo {
+    padding: 0px 0px 16px 25px;
+
+    font-size: 20px;
+    font-weight: 500;
+
+    margin-left: -28px;
+    margin-right: -28px;
+
+    margin-bottom: 30px;
+
+    border-bottom: 1px solid #e0e0e0;
 }
 
 @media (max-width: 1180px) {

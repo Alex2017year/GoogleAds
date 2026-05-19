@@ -102,6 +102,7 @@ createApp({
                 : new Date(2026, 3, 1),
             selectingStartDate: true,
             previewModal: null,
+            isPreviewDetailsExpanded: true,
             isContextBarHidden: false,
             ads_isCampaignOpen: true,
             ads_isInsightsReportsOpen: true,
@@ -1152,9 +1153,13 @@ createApp({
         },
         openImagePreview(asset) {
             this.previewModal = { type: 'image', asset };
+            this.isPreviewDetailsExpanded = true;
         },
         closePreview() {
             this.previewModal = null;
+        },
+        togglePreviewDetails() {
+            this.isPreviewDetailsExpanded = !this.isPreviewDetailsExpanded;
         },
         handleScroll() {
             const mainElement = document.querySelector('.ga-main');

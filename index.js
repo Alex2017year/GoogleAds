@@ -7,6 +7,24 @@ const path = require('path');
 const https = require('https');
 const fs = require('fs');
 
+function getRandomAssetSourceTime() {
+  const daysAgo = 2 + Math.floor(Math.random() * 2); // 2 or 3 days ago
+  const date = new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000);
+  date.setHours(Math.floor(Math.random() * 24));
+  date.setMinutes(Math.floor(Math.random() * 60));
+  date.setSeconds(Math.floor(Math.random() * 60));
+
+  const pad = (value) => String(value).padStart(2, '0');
+  const year = date.getFullYear();
+  const month = pad(date.getMonth() + 1);
+  const day = pad(date.getDate());
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+  const seconds = pad(date.getSeconds());
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
 const app = new Koa();
 const router = new Router();
 const transform = require('./transform');
@@ -73,6 +91,7 @@ router.get('/api/adassets/plan1', async (ctx) => {
       // asset: `Image ${i}`,
       asset: sizeName[i],
       assetType: 'Image',
+      source: `Free stock image - ${getRandomAssetSourceTime()}_1.870`,
       status: 'Eligible',
       performance: 'Pending',
       image: `/adassets/plan1/img${i}.jpg`,

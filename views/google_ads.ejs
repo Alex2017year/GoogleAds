@@ -525,13 +525,13 @@
                     </div>
                     <div class="ga-strength-score">
                         <span class="ga-ring"></span>
-                        <div><strong>Ad strength</strong><span>Poor</span></div>
+                        <div><strong>Ad strength</strong><span>Good</span></div>
                     </div>
                     <div class="ga-strength-counts">
-                        <span><b></b>Headlines {{ data.assetSummary.headlines }}</span>
-                        <span><b></b>Descriptions {{ data.assetSummary.descriptions }}</span>
-                        <span><b></b>Images {{ data.assetSummary.images }}</span>
-                        <span><b></b>Videos {{ data.assetSummary.videos }}</span>
+                        <span><b></b>Headlines<br>{{ data.assetSummary.headlines }}</span>
+                        <span><b></b>Descriptions<br>{{ data.assetSummary.descriptions }}</span>
+                        <span><b></b>Images<br>{{ data.assetSummary.images }}</span>
+                        <span><b></b>Videos<br>{{ data.assetSummary.videos }}</span>
                     </div>
                     <span class="material-symbols-outlined">expand_more</span>
                 </section>
@@ -549,6 +549,7 @@
                             <span>None</span>
                             <span class="material-symbols-outlined">arrow_drop_down</span>
                         </button>
+                        <span style="width: 20px;">  </span>
                         <button class="ga-chart-tool" type="button">
                             <span class="material-symbols-outlined">show_chart</span>
                             <small>Chart type</small>
@@ -580,8 +581,11 @@
                         <rect v-for="x in [35, 300, 565, 830]" :key="x" :x="x" y="18" width="38" height="136"
                             class="ga-chart-band"></rect>
                         <line x1="20" y1="28" x2="980" y2="28"></line>
+                        <text x="8" y="33" class="ga-chart-label">2</text>
                         <line x1="20" y1="90" x2="980" y2="90"></line>
+                        <text x="8" y="95" class="ga-chart-label">1</text>
                         <line x1="20" y1="154" x2="980" y2="154"></line>
+                        <text x="8" y="159" class="ga-chart-label">0</text>
                         <polyline points="20,154 980,154" class="ga-chart-line"></polyline>
                     </svg>
                     <div v-if="isRefreshing" class="ga-chart-loading" role="status" aria-label="Refreshing data">
@@ -911,21 +915,32 @@
                     <img :src="previewModal.asset.image" :alt="previewModal.asset.asset">
                 </div>
                 <aside class="ga-preview-details">
-                    <h2>About this asset</h2>
+                    <!-- <h2>About this asset</h2> -->
+                    <div class="ga-previewModal-asset-aboutinfo-aboutinfo">
+                        About this asset
+                    </div>
                     <h3>{{ previewModal.asset.source }}</h3>
                     <dl>
-                        <dt>Asset ID</dt>
-                        <dd>{{ previewModal.asset.id }}</dd>
-                        <dt>Type</dt>
-                        <dd>{{ previewModal.asset.assetType }}</dd>
-                        <dt>Dimensions</dt>
-                        <dd>{{ previewModal.asset.asset }}</dd>
-                        <dt>Orientation</dt>
-                        <dd>Square</dd>
-                        <dt>Aspect ratio</dt>
-                        <dd>1:1</dd>
-                        <dt>Source</dt>
-                        <dd>Advertiser</dd>
+                        <dt class="ga-preview-details-title" @click="togglePreviewDetails">Details</dt>
+                        <dd class="ga-preview-details-toggle">
+                            <button class="ga-preview-details-toggle-button" type="button" @click.stop="togglePreviewDetails" aria-label="Toggle details">
+                                <span class="material-symbols-outlined">{{ isPreviewDetailsExpanded ? 'expand_less' : 'expand_more' }}</span>
+                            </button>
+                        </dd>
+                        <template v-if="isPreviewDetailsExpanded">
+                            <dt>Asset ID</dt>
+                            <dd>{{ previewModal.asset.id }}</dd>
+                            <dt>Type</dt>
+                            <dd>{{ previewModal.asset.assetType }}</dd>
+                            <dt>Dimensions</dt>
+                            <dd>{{ previewModal.asset.asset }}</dd>
+                            <dt>Orientation</dt>
+                            <dd>Square</dd>
+                            <dt>Aspect ratio</dt>
+                            <dd>1:1</dd>
+                            <dt>Source</dt>
+                            <dd>Advertiser</dd>
+                        </template>
                     </dl>
                 </aside>
             </section>
