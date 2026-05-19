@@ -181,7 +181,7 @@
                         <a class="ga-sidebar-link" 
    :class="{ active: pageMode === 'reporteditor' }" 
    href="#" 
-   @click.prevent="pageMode = 'reporteditor'; pageTitle = 'Report editor'; isContextBarHidden = true;" 
+   @click="switchPage('reporteditor')" 
    data-tooltip="Report editor">
     Report editor
 </a>
