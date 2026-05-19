@@ -1269,8 +1269,8 @@
 .ga-asset-chart-area {
     position: relative;
     margin: 0 28px;
-    height: 220px;
-    background: #fff;
+    height: 210px;
+    background: #eef0f1;
     border-bottom: 1px solid #dadce0;
     overflow: hidden;
 }
@@ -1279,6 +1279,7 @@
     position: absolute;
     top: 12px;
     right: 18px;
+    bottom: 5px;
     display: flex;
     align-items: flex-start;
     gap: 10px;
@@ -1303,7 +1304,7 @@
     gap: 8px;
     border: 1px solid #c4c7c5;
     border-radius: 4px;
-    background: #fff;
+    background: #eef0f1;
 }
 
 .ga-chart-select .material-symbols-outlined {
@@ -1344,6 +1345,7 @@
 .ga-chart-tool small {
     font-size: 11px;
     line-height: 14px;
+    font-weight: 600;
     white-space: nowrap;
 }
 
@@ -1500,8 +1502,8 @@
 button.ga-floating-add {
     position: absolute;
     z-index: 20;
-    left: 22px;
-    top: 100px;
+    left: 5px;
+    top: -20px;
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -1535,7 +1537,7 @@ button.ga-floating-add .material-symbols-outlined {
 }
 
 .ga-table-panel--adassets button.ga-floating-add {
-    top: 138px;
+    top: -20px;
 }
 
 .ga-toolbar-left {
