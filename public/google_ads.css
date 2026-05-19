@@ -1266,6 +1266,124 @@
     background: #fff;
 }
 
+.ga-asset-chart-area {
+    position: relative;
+    margin: 0 28px;
+    height: 220px;
+    background: #fff;
+    border-bottom: 1px solid #dadce0;
+    overflow: hidden;
+}
+
+.ga-asset-chart-controls {
+    position: absolute;
+    top: 12px;
+    right: 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    z-index: 2;
+}
+
+.ga-chart-select,
+.ga-chart-tool {
+    border: 0;
+    background: transparent;
+    color: #3c4043;
+    font: inherit;
+    cursor: pointer;
+}
+
+.ga-chart-select {
+    height: 44px;
+    min-width: 118px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1px solid #c4c7c5;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.ga-chart-select .material-symbols-outlined {
+    font-size: 18px;
+    color: #5f6368;
+}
+
+.ga-chart-series-dot {
+    width: 10px;
+    height: 3px;
+    border-radius: 2px;
+}
+
+.ga-chart-series-dot.blue {
+    background: #1a73e8;
+}
+
+.ga-chart-series-dot.red {
+    background: #d93025;
+}
+
+.ga-chart-tool {
+    width: 62px;
+    min-height: 48px;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    color: #5f6368;
+}
+
+.ga-chart-tool .material-symbols-outlined {
+    font-size: 22px;
+    color: #5f6368;
+}
+
+.ga-chart-tool small {
+    font-size: 11px;
+    line-height: 14px;
+    white-space: nowrap;
+}
+
+.ga-asset-chart-area svg {
+    width: calc(100% - 38px);
+    height: 168px;
+    margin: 28px 18px 0;
+    overflow: visible;
+}
+
+.ga-asset-chart-area line {
+    stroke: #dadce0;
+    stroke-width: 1;
+}
+
+.ga-asset-chart-label {
+    fill: #777;
+    font-size: 14px;
+}
+
+.ga-asset-chart-line {
+    fill: none;
+    stroke: #1a73e8;
+    stroke-width: 2;
+}
+
+.ga-asset-chart-point {
+    fill: #1a73e8;
+}
+
+.ga-asset-chart-date {
+    position: absolute;
+    left: 50%;
+    bottom: 8px;
+    transform: translateX(-50%);
+    color: #777;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
 .ga-chart-area {
     position: relative;
     margin: 0 28px;

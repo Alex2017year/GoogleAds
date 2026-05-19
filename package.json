@@ -7,7 +7,7 @@
     "dev": "node index.js",
     "start:node20": "node20/node.exe index.js",
     "win": "start.bat",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test"
   },
   "keywords": [],
   "author": "",

@@ -89,6 +89,7 @@ createApp({
             selectedCampaignId: params.get('campaignId') || '',
             selectedAdGroupId: params.get('adGroupId') || 'adgroup-1',
             showDatePicker: false,
+            datePickerPositionTick: 0,
             selectedDateOption: initialDateFilter.selectedDateOption,
             appliedDateOption: initialDateFilter.appliedDateOption,
             compareEnabled: false,
@@ -109,7 +110,8 @@ createApp({
             isNotificationsOpen: false,
             isRefreshing: false,
             metricDeltaRatios: {},
-            assetCostSortDirection: 'desc',
+            assetSortKey: 'cost',
+            assetSortDirection: 'desc',
             tooltip: {
                 visible: false,
                 text: '',
@@ -448,13 +450,29 @@ createApp({
             }
 
             return all.sort((left, right) => {
-                const costDiff = safeNumber(left.cost) - safeNumber(right.cost);
-                if (costDiff !== 0) {
-                    return this.assetCostSortDirection === 'asc' ? costDiff : -costDiff;
+                let diff = 0;
+
+                if (this.assetSortKey === 'assetType') {
+                    diff = String(left.assetType || '').localeCompare(String(right.assetType || ''), 'en', {
+                        numeric: true,
+                        sensitivity: 'base'
+                    });
+                } else {
+                    diff = safeNumber(left.cost) - safeNumber(right.cost);
+                }
+
+                if (diff !== 0) {
+                    return this.assetSortDirection === 'asc' ? diff : -diff;
                 }
 
                 return String(left.asset || '').localeCompare(String(right.asset || ''), 'en', { numeric: true });
             });
+        },
+        assetCostSortDirection() {
+            return this.assetSortKey === 'cost' ? this.assetSortDirection : 'desc';
+        },
+        assetTypeSortDirection() {
+            return this.assetSortKey === 'assetType' ? this.assetSortDirection : 'asc';
         },
         paginationText() {
             if (this.pageMode === 'adassets') {
@@ -508,12 +526,15 @@ createApp({
         },
         dropdownStyle() {
             if (!this.showDatePicker || !this.$refs.dateSelectRef) return {};
+            this.datePickerPositionTick;
             const rect = this.$refs.dateSelectRef.getBoundingClientRect();
+            const pageHead = this.$refs.dateSelectRef.closest('.ga-page-head');
+            const pageHeadRect = pageHead ? pageHead.getBoundingClientRect() : { top: 0, left: 0, width: window.innerWidth };
             const pickerWidth = 508;
-            const left = Math.max(16, Math.min(rect.left, window.innerWidth - pickerWidth - 16));
+            const left = Math.max(16, Math.min(rect.left - pageHeadRect.left, pageHeadRect.width - pickerWidth - 16));
             return {
-                position: 'fixed',
-                top: `${rect.bottom + 8}px`,
+                position: 'absolute',
+                top: `${rect.bottom - pageHeadRect.top + 8}px`,
                 left: `${left}px`,
                 zIndex: '10000'
             };
@@ -561,8 +582,17 @@ createApp({
                 console.error('Unable to load ad assets', error);
             }
         },
+        toggleAssetSort(key) {
+            if (this.assetSortKey === key) {
+                this.assetSortDirection = this.assetSortDirection === 'asc' ? 'desc' : 'asc';
+                return;
+            }
+
+            this.assetSortKey = key;
+            this.assetSortDirection = key === 'assetType' ? 'asc' : 'desc';
+        },
         toggleAssetCostSort() {
-            this.assetCostSortDirection = this.assetCostSortDirection === 'asc' ? 'desc' : 'asc';
+            this.toggleAssetSort('cost');
         },
         refreshCampaignData() {
             this.data = {
@@ -1135,6 +1165,11 @@ createApp({
             const mainElement = document.querySelector('.ga-main');
             if (mainElement) {
                 this.isContextBarHidden = mainElement.scrollTop > 50;
+            }
+            if (this.showDatePicker) {
+                this.$nextTick(() => {
+                    this.datePickerPositionTick += 1;
+                });
             }
         },
 
