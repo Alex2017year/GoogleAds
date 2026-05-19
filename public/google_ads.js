@@ -21,6 +21,7 @@ function getInitialPageMode() {
     }
     if (window.location.pathname.includes('/adassets')) return 'adassets';
     if (window.location.pathname.includes('/adgroups')) return 'adgroups';
+    if (window.location.pathname.includes('/reporteditor')) return 'reporteditor';
     return 'campaigns';
 }
 
@@ -535,6 +536,20 @@ createApp({
                 left: `${left}px`,
                 zIndex: '10000'
             };
+        }
+    },
+    watch: {
+        pageMode(newMode) {
+            // 1. 只要切换了页面模式，不管三七二十一，先强制让顶部栏显示出来
+            this.isContextBarHidden = false;
+            
+            // 2. 让滚动容器 (.ga-main) 瞬间回到最顶部，清除上一页残留的滚动距离
+            this.$nextTick(() => {
+                const mainElement = document.querySelector('.ga-main');
+                if (mainElement) {
+                    mainElement.scrollTop = 0;
+                }
+            });
         }
     },
     methods: {
@@ -1233,6 +1248,17 @@ createApp({
         toggleNotifications() {
             this.isNotificationsOpen = !this.isNotificationsOpen
         },
+        switchPage(mode) {
+        this.pageMode = mode;
+        // 更新浏览器地址栏，实现 /overview 或 /reporteditor 的效果
+        window.history.pushState(null, '', `/aw/${mode}`);
+        
+        // 强制重置滚动位置
+        this.$nextTick(() => {
+            const main = document.querySelector('.ga-main');
+            if (main) main.scrollTop = 0;
+        });
+        }
     },
     async mounted() {
         await this.loadData();

@@ -2168,7 +2168,186 @@ button.ga-floating-add .material-symbols-outlined {
     margin-left: 120px;
     margin: 0;
 }
+/* Report Editor 专属样式页 */
+.ga-re-container {
+    padding: 24px;
+    background-color: #f8f9fa;
+    min-height: calc(100vh - 120px);
+    font-family: Roboto, Arial, sans-serif;
+}
 
+/* 按钮样式 */
+.ga-re-action-bar {
+    margin-bottom: 24px;
+}
+.ga-re-btn-primary {
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0 16px;
+    height: 36px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+}
+.ga-re-btn-primary:hover {
+    background-color: #1557b0;
+}
+
+/* 通用大卡片布局 */
+.ga-re-card {
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    overflow: hidden;
+}
+.ga-re-card-header {
+    display: flex;
+    align-items: center;
+    padding: 16px 24px 8px 24px;
+}
+.ga-re-card-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #202124;
+}
+.ga-re-badge-beta {
+    background-color: #e6f4ea;
+    color: #137333;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.ga-re-card-body {
+    padding: 0 24px 24px 24px;
+}
+
+/* 搜索生成组件结构 */
+.ga-re-search-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+    margin-bottom: 16px;
+}
+.ga-re-input {
+    flex: 1;
+    height: 40px;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    padding: 0 16px;
+    font-size: 14px;
+    outline: none;
+}
+.ga-re-input:focus {
+    border-color: #1a73e8;
+}
+.ga-re-btn-generate {
+    height: 40px;
+    padding: 0 24px;
+    background-color: #f1f3f4;
+    color: #3c4043;
+    border: 1px solid #f1f3f4;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: not-allowed;
+}
+.ga-re-link-suggest {
+    color: #1a73e8;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    margin-left: 8px;
+}
+
+/* 推荐小胶囊标签组 Chips */
+.ga-re-chips-group {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+.ga-re-chip {
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+    color: #3c4043;
+    cursor: pointer;
+}
+.ga-re-chip:hover {
+    background-color: #f8f9fa;
+}
+.ga-re-notice-text {
+    font-size: 12px;
+    color: #5f6368;
+    line-height: 1.5;
+    margin: 0;
+}
+.ga-re-notice-text a {
+    color: #1a73e8;
+    text-decoration: none;
+}
+
+/* 常用报表栏目 & 网格布局 */
+.ga-re-section-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #202124;
+    margin-bottom: 12px;
+}
+.ga-re-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+/* 四方卡表样式 */
+.ga-re-report-card {
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none; /* 让作为 <a> 的卡片 1 不出现下划线 */
+    color: inherit;
+    min-height: 100px;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+.ga-re-report-card:hover {
+    box-shadow: 0 1px 3px rgba(60,64,67,0.2);
+    border-color: #bcccf6;
+}
+.ga-re-report-card .card-meta {
+    font-size: 11px;
+    color: #5f6368;
+    margin-bottom: 8px;
+}
+.ga-re-report-card .card-main-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #202124;
+    flex: 1;
+}
+.ga-re-report-card .card-author {
+    font-size: 11px;
+    color: #5f6368;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 12px;
+}
 @media (max-width: 1180px) {
     .ga-search,
     .ga-profile,

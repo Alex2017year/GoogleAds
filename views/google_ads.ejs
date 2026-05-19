@@ -178,8 +178,13 @@
                             'expand_more' }}</span>
                     </button>
                     <div class="ga-sidebar-submenu">
-                        <a class="ga-sidebar-link" href="/aw/reporteditor/view" data-tooltip="Report editor">Report
-                            editor</a>
+                        <a class="ga-sidebar-link" 
+   :class="{ active: pageMode === 'reporteditor' }" 
+   href="#" 
+   @click="switchPage('reporteditor')" 
+   data-tooltip="Report editor">
+    Report editor
+</a>
                         <a class="ga-sidebar-link" href="#" data-tooltip="Dashboards"
                             data-tooltip="Dashboards">Dashboards</a>
                     </div>
@@ -277,7 +282,7 @@
                     </div>
                 </section>
 
-                <section class="ga-page-head" :class="{ 'ga-page-head--adassets': pageMode === 'adassets' }">
+                <section class="ga-page-head" :class="{ 'ga-page-head--adassets': pageMode === 'adassets' }" v-if="pageMode !== 'reporteditor'">
                     <div class="ga-page-head-heading">
                         <h1>{{ pageTitle }}</h1>
                         <div v-if="pageMode === 'adassets'" class="ga-frozen-adgroup-card" aria-label="Selected ad group">
@@ -475,7 +480,83 @@
                         </div>
                     </transition>
                 </section>
+                <div v-if="pageMode === 'reporteditor'" class="ga-re-container">
+    
+    <div class="ga-re-action-bar">
+        <button class="ga-re-btn-primary" type="button">
+            <span class="material-symbols-outlined">add</span>
+            Create report
+        </button>
+    </div>
 
+    <div class="ga-re-card">
+        <div class="ga-re-card-header" style="justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="material-symbols-outlined" style="color: #5f6368;">analytics</span>
+                <span class="ga-re-card-title">Generate report</span>
+                <span class="ga-re-badge-beta">BETA</span>
+            </div>
+            <span class="material-symbols-outlined" style="color: #5f6368; cursor: pointer;">expand_less</span>
+        </div>
+        
+        <div class="ga-re-card-body">
+            <div class="ga-re-search-row">
+                <input type="text" class="ga-re-input" placeholder="Describe the report you want to generate">
+                <button class="ga-re-btn-generate" disabled>Generate</button>
+                <a href="#" class="ga-re-link-suggest">Refresh suggestions</a>
+            </div>
+            
+            <div class="ga-re-chips-group">
+                <button class="ga-re-chip" type="button">Where is my performance dropping?</button>
+                <button class="ga-re-chip" type="button">What are my top campaigns?</button>
+                <button class="ga-re-chip" type="button">Who are seeing my ads?</button>
+            </div>
+            
+            <p class="ga-re-notice-text">
+                Review the automatically selected rows and columns to ensure the generated report represents what you asked for. Do not share personal, confidential, or sensitive information. Learn more about Google's <a href="#">Terms of Service</a>.
+            </p>
+        </div>
+    </div>
+
+    <div class="ga-re-section">
+        <h2 class="ga-re-section-title">Frequently used reports</h2>
+        
+        <div class="ga-re-grid">
+            <a href="/aw/reporteditor/view" class="ga-re-report-card">
+                <div class="card-meta">Saved report</div>
+                <div class="card-main-title">1</div>
+                <div class="card-author">Created by reillymalvina309@gmail.com</div>
+            </a>
+
+            <div class="ga-re-report-card">
+                <div class="card-meta">Saved report</div>
+                <div class="card-main-title">BA</div>
+                <div class="card-author">Created by reillymalvina309@gmail.com</div>
+            </div>
+
+            <div class="ga-re-report-card">
+                <div class="card-meta">Saved report</div>
+                <div class="card-main-title">JK</div>
+                <div class="card-author">Created by reillymalvina309@gmail.com</div>
+            </div>
+
+            <div class="ga-re-report-card">
+                <div class="card-meta">Saved report</div>
+                <div class="card-main-title">999</div>
+                <div class="card-author">Created by reillymalvina309@gmail.com</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ga-re-card" style="margin-top: 16px;">
+        <div class="ga-re-card-header" style="justify-content: space-between; cursor: pointer; padding: 16px 24px;">
+            <span class="ga-re-card-title" style="font-size: 15px;">Saved reports</span>
+            <span class="material-symbols-outlined" style="color: #5f6368;">expand_more</span>
+        </div>
+    </div>
+
+</div>
+<template v-else>
                 <section v-if="pageMode === 'campaigns'" class="ga-page-filter-row">
                     <span>Filters</span>
                     <button class="ga-filter-badge" type="button">Campaign status: All</button>
@@ -893,6 +974,7 @@
                         accredited metrics.</p>
                     <p>&copy; Google, 2026.</p>
                 </footer>
+                </template>
             </main>
         </div>
 
